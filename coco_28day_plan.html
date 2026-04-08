@@ -1,0 +1,2393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>28-Day CoCo Badge Plan — Snowflake Cortex</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap');
+
+  :root {
+    --bg: #06090f;
+    --surface: #0d1117;
+    --card: #111720;
+    --border: #1e2a38;
+    --accent: #00d4ff;
+    --accent2: #7b61ff;
+    --accent3: #00ff9d;
+    --warn: #ff9a3c;
+    --text: #e2eaf5;
+    --muted: #6b8099;
+    --week1: #00d4ff;
+    --week2: #7b61ff;
+    --week3: #00ff9d;
+    --week4: #ff6b6b;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
+    min-height: 100vh;
+  }
+
+  /* BG grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrapper { position: relative; z-index: 1; max-width: 960px; margin: 0 auto; padding: 48px 24px 80px; }
+
+  /* HEADER */
+  header { text-align: center; margin-bottom: 56px; }
+
+  .badge-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(0,212,255,0.08);
+    border: 1px solid rgba(0,212,255,0.25);
+    border-radius: 100px;
+    padding: 6px 18px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    margin-bottom: 24px;
+  }
+  .badge-pill span { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; display: inline-block; animation: pulse 2s infinite; }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(32px, 6vw, 54px);
+    font-weight: 800;
+    line-height: 1.1;
+    background: linear-gradient(135deg, #ffffff 0%, #00d4ff 50%, #7b61ff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 16px;
+  }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 16px;
+    max-width: 560px;
+    margin: 0 auto 32px;
+  }
+
+  /* PROGRESS BAR */
+  .progress-bar-wrap {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 28px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 48px;
+  }
+  .progress-track { flex: 1; height: 8px; background: rgba(255,255,255,0.06); border-radius: 100px; overflow: hidden; }
+  .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 100px; transition: width 0.5s ease; }
+  .progress-label { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--accent); white-space: nowrap; min-width: 80px; }
+  .progress-days { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--muted); white-space: nowrap; }
+
+  /* WEEK HEADERS */
+  .week-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 48px 0 24px;
+  }
+  .week-tag {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    border-radius: 100px;
+    border: 1px solid;
+    white-space: nowrap;
+  }
+  .week-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+  }
+  .week-line { flex: 1; height: 1px; background: var(--border); }
+
+  .w1 .week-tag { color: var(--week1); border-color: rgba(0,212,255,0.4); background: rgba(0,212,255,0.07); }
+  .w2 .week-tag { color: var(--week2); border-color: rgba(123,97,255,0.4); background: rgba(123,97,255,0.07); }
+  .w3 .week-tag { color: var(--week3); border-color: rgba(0,255,157,0.4); background: rgba(0,255,157,0.07); }
+  .w4 .week-tag { color: var(--week4); border-color: rgba(255,107,107,0.4); background: rgba(255,107,107,0.07); }
+
+  /* DAY CARD */
+  .day-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin-bottom: 16px;
+    overflow: hidden;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .day-card:hover { border-color: rgba(0,212,255,0.2); box-shadow: 0 0 24px rgba(0,212,255,0.06); }
+  .day-card.done { border-color: rgba(0,255,157,0.3); }
+  .day-card.done .day-num { background: rgba(0,255,157,0.12); color: var(--accent3); }
+
+  .day-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 22px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s;
+  }
+  .day-header:hover { background: rgba(255,255,255,0.02); }
+
+  .day-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    background: rgba(0,212,255,0.1);
+    color: var(--accent);
+    padding: 4px 10px;
+    border-radius: 6px;
+    min-width: 52px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .day-title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; flex: 1; }
+  .day-meta { display: flex; align-items: center; gap: 10px; }
+
+  .task-count {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .chevron {
+    width: 18px; height: 18px;
+    color: var(--muted);
+    transition: transform 0.3s;
+    flex-shrink: 0;
+  }
+  .day-card.open .chevron { transform: rotate(180deg); }
+
+  .done-btn {
+    background: rgba(0,255,157,0.1);
+    border: 1px solid rgba(0,255,157,0.25);
+    color: var(--accent3);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+  .done-btn:hover { background: rgba(0,255,157,0.2); }
+  .done-btn.marked { background: var(--accent3); color: #000; }
+
+  /* DAY BODY */
+  .day-body { display: none; padding: 0 22px 22px; }
+  .day-card.open .day-body { display: block; }
+
+  .task-block { margin-bottom: 22px; }
+  .task-block:last-child { margin-bottom: 0; }
+
+  .task-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .task-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  .task-title {
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+
+  /* PROMPT BOX */
+  .prompt-box {
+    background: #080d14;
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 10px;
+    padding: 14px 16px;
+    position: relative;
+    margin-top: 8px;
+  }
+
+  .prompt-box.sql { border-left-color: var(--accent2); }
+  .prompt-box.concept { border-left-color: var(--warn); }
+
+  .prompt-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+    display: block;
+  }
+  .prompt-box.sql .prompt-tag { color: var(--accent2); }
+  .prompt-box.concept .prompt-tag { color: var(--warn); }
+
+  .prompt-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: #a8c0d8;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .copy-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .copy-btn:hover { background: rgba(0,212,255,0.1); color: var(--accent); border-color: rgba(0,212,255,0.3); }
+  .copy-btn.copied { background: rgba(0,255,157,0.1); color: var(--accent3); border-color: rgba(0,255,157,0.3); }
+
+  /* LEGEND */
+  .legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 40px;
+  }
+  .legend-item {
+    display: flex; align-items: center; gap: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    margin-top: 60px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    border-top: 1px solid var(--border);
+    padding-top: 28px;
+  }
+
+  @media (max-width: 600px) {
+    .day-header { padding: 14px 16px; gap: 10px; }
+    .day-body { padding: 0 16px 16px; }
+    .done-btn { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <header>
+    <div class="badge-pill"><span></span> COCO BADGE CHALLENGE</div>
+    <h1>28-Day Snowflake<br/>Cortex Analyst Plan</h1>
+    <p class="subtitle">Copy each prompt and run it directly in CoCo — no manual work needed. Every prompt is designed to make CoCo do all the heavy lifting.</p>
+  </header>
+
+  <div class="progress-bar-wrap">
+    <span class="progress-days" id="completedCount">0 / 28 days done</span>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <span class="progress-label" id="progressPct">0%</span>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div> COCO Prompt (Natural Language)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent2)"></div> SQL Prompt (Run in Worksheet)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--warn)"></div> Concept Prompt (Ask CoCo to Explain)</div>
+  </div>
+
+  <div id="planContainer"></div>
+
+  <footer>Snowflake Cortex Analyst · 28-Day CoCo Badge Challenge · All prompts copy-paste ready</footer>
+</div>
+
+<script>
+const plan = [
+  // ====== WEEK 1 ======
+  { week: 1, weekTitle: "Snowflake Foundations", weekSub: "Days 1–7 · Get oriented, set up your environment, make your first interactions with CoCo" },
+
+  {
+    day: 1, title: "Orientation & First Contact with CoCo",
+    tasks: [
+      {
+        label: "Task 1 — Introduce Yourself to CoCo",
+        title: "Ask CoCo to explain itself and set expectations for your 28-day journey",
+        type: "coco",
+        prompt: `I am new to Snowflake Cortex Analyst. I want to use you for 28 days to earn the CoCo badge. Please explain what you are, what you can help me with, what Snowflake Cortex is as a platform, and give me a list of all the Cortex AI functions available today with a one-line description of what each one does. Format the list clearly.`
+      },
+      {
+        label: "Task 2 — Environment Setup",
+        title: "Ask CoCo to generate the full environment setup SQL you need to run",
+        type: "sql",
+        prompt: `Write me a complete Snowflake SQL script that I can run in a fresh Snowflake trial account to set up everything I need for a 28-day Cortex Analyst learning journey. The script should:
+1. Create a database called COCO_LAB
+2. Create schemas: RAW, ANALYTICS, STAGING, AI_OUTPUTS
+3. Create an X-Small warehouse called COCO_WH with auto-suspend 60 seconds and auto-resume true
+4. Set the context (USE DATABASE, USE SCHEMA, USE WAREHOUSE)
+5. Grant SYSADMIN all privileges on these objects
+6. Add comments on each object explaining what it is for
+Run each step with clear section comments so I know what each block does.`
+      },
+      {
+        label: "Task 3 — Verify Setup",
+        title: "Ask CoCo to write a verification script to confirm everything was created correctly",
+        type: "sql",
+        prompt: `Write me a Snowflake SQL verification script that:
+1. Shows all databases in my account that contain 'COCO'
+2. Shows all schemas inside COCO_LAB
+3. Shows all warehouses and their sizes, state, and auto-suspend settings
+4. Shows the current role, user, warehouse, database and schema
+5. Prints a clear success message using SYSTEM$CURRENT_USER_TASK_NAME or a simple SELECT 'SETUP COMPLETE ✅' statement
+Format the output with descriptive column aliases so each result is self-explanatory.`
+      },
+      {
+        label: "Task 4 — Concept Deep Dive",
+        title: "Ask CoCo to explain the Snowflake architecture from the ground up",
+        type: "concept",
+        prompt: `Explain the Snowflake architecture to me like I am completely new to it. Cover:
+- What makes Snowflake different from traditional databases
+- The three-layer architecture: Storage, Compute, and Cloud Services
+- What a Virtual Warehouse is and how it works
+- What a Snowflake Stage is
+- What Time Travel is
+- What Zero-Copy Cloning is
+Use simple analogies and give one real-world example for each concept. Do not use jargon without explaining it first.`
+      }
+    ]
+  },
+
+  {
+    day: 2, title: "Building Your First Tables & Sample Data",
+    tasks: [
+      {
+        label: "Task 1 — Create Sales Domain Tables",
+        title: "Ask CoCo to build a realistic multi-table sales schema with realistic sample data",
+        type: "sql",
+        prompt: `Write a complete Snowflake SQL script that creates and populates a realistic e-commerce sales dataset in the COCO_LAB.RAW schema. Include:
+
+1. CUSTOMERS table with columns: customer_id, first_name, last_name, email, country, city, signup_date, segment (Gold/Silver/Bronze), lifetime_value
+2. PRODUCTS table with: product_id, product_name, category, subcategory, unit_price, cost_price, supplier_country, stock_quantity
+3. ORDERS table with: order_id, customer_id, order_date, status (Completed/Pending/Cancelled/Refunded), shipping_country, discount_pct
+4. ORDER_ITEMS table with: item_id, order_id, product_id, quantity, unit_price_at_sale, total_line_value
+
+Insert at least 20 customers, 15 products, 40 orders, and 80 order items with realistic, varied data spanning 2022–2024. Make the data interesting: some high-value customers, some cancelled orders, varied countries, varied product categories (Electronics, Clothing, Home, Beauty, Sports).
+
+Add primary key and foreign key constraints. Add comments on each table explaining what it stores.`
+      },
+      {
+        label: "Task 2 — Data Exploration Queries",
+        title: "Ask CoCo to write exploration queries across your new tables",
+        type: "sql",
+        prompt: `I have created these tables in COCO_LAB.RAW: CUSTOMERS, PRODUCTS, ORDERS, ORDER_ITEMS.
+Write me 8 exploratory SQL queries that help me understand this dataset. Include:
+1. Row counts for each table
+2. Date range of orders
+3. Count of customers per country
+4. Top 5 products by total revenue (join ORDER_ITEMS and PRODUCTS)
+5. Order status distribution (count and percentage for each status)
+6. Average order value per customer segment
+7. Products that have never been ordered
+8. Monthly revenue trend for 2023
+For each query add a single-line comment at the top explaining what it shows.`
+      },
+      {
+        label: "Task 3 — Analytical Views",
+        title: "Ask CoCo to build analytical views on top of the raw tables",
+        type: "sql",
+        prompt: `Using the tables COCO_LAB.RAW.CUSTOMERS, PRODUCTS, ORDERS, ORDER_ITEMS, write SQL to create the following views in COCO_LAB.ANALYTICS:
+
+1. V_SALES_SUMMARY — joins all 4 tables, shows order_id, customer full name, customer segment, product name, category, quantity, revenue, order date, order status, country
+2. V_CUSTOMER_KPIs — one row per customer with: total_orders, total_revenue, avg_order_value, first_order_date, last_order_date, days_since_last_order, customer_segment
+3. V_PRODUCT_PERFORMANCE — one row per product with: total_units_sold, total_revenue, total_profit (revenue minus cost), profit_margin_pct, number_of_orders
+
+Add CREATE OR REPLACE VIEW and detailed column comments. These views will be used for all future Cortex Analyst tasks.`
+      },
+      {
+        label: "Task 4 — Concept: Snowflake Data Types",
+        title: "Ask CoCo to explain Snowflake data types and when to use each",
+        type: "concept",
+        prompt: `Explain all the important Snowflake data types I should know as a data practitioner. Cover:
+- Numeric types: NUMBER, INT, FLOAT, DECIMAL — when to use which
+- String types: VARCHAR, STRING, TEXT — differences and limits
+- Date/time types: DATE, TIME, TIMESTAMP_NTZ, TIMESTAMP_LTZ, TIMESTAMP_TZ — which one to use in what situation and why TIMESTAMP_NTZ is usually preferred
+- Semi-structured: VARIANT, ARRAY, OBJECT — what they store and a simple example
+- BOOLEAN and GEOGRAPHY types
+
+For each type give a real example of what kind of column would use it. Keep it practical.`
+      }
+    ]
+  },
+
+  {
+    day: 3, title: "Loading Data — Stages & COPY INTO",
+    tasks: [
+      {
+        label: "Task 1 — Create Stages",
+        title: "Ask CoCo to set up internal and external stages with full SQL",
+        type: "sql",
+        prompt: `Write me a complete Snowflake SQL script that:
+1. Creates an internal named stage called COCO_LAB.RAW.MY_INTERNAL_STAGE with a CSV file format that handles: comma delimiter, skip header row, handle nulls as empty string, trim whitespace, compression AUTO
+2. Creates a named file format called COCO_CSV_FORMAT in COCO_LAB.RAW for CSVs with those same settings
+3. Creates a named file format called COCO_JSON_FORMAT for JSON files
+4. Lists what is in the internal stage using LIST command
+5. Shows all stages in COCO_LAB.RAW using SHOW STAGES
+Add clear section comments. Explain in SQL comments why stages are important and how they differ from external stages.`
+      },
+      {
+        label: "Task 2 — Generate CSV Data & Load Script",
+        title: "Ask CoCo to generate a sample CSV and the complete loading script",
+        type: "sql",
+        prompt: `I want to simulate loading an external CSV file into Snowflake. 
+First, write me a SQL script that uses INSERT INTO to simulate what a loaded CSV would look like — create a new table called COCO_LAB.RAW.MARKETING_CAMPAIGNS with columns: campaign_id, campaign_name, channel (Email/Social/Paid Search/TV), start_date, end_date, budget_usd, leads_generated, conversions, revenue_attributed. Insert 15 rows of realistic campaign data across 2023 and 2024.
+
+Then write the equivalent COPY INTO statement that would load this data IF it came from a CSV file in a stage, showing the full syntax with FILE FORMAT reference, ON_ERROR handling, PURGE option, and a VALIDATION_MODE = 'RETURN_ERRORS' check before the real load.
+
+Also write a POST_LOAD_VALIDATION query that checks row count, checks for nulls in key columns, and checks date ranges after loading.`
+      },
+      {
+        label: "Task 3 — Loading JSON Semi-Structured Data",
+        title: "Ask CoCo to create a VARIANT column workflow for JSON data",
+        type: "sql",
+        prompt: `Show me a complete Snowflake SQL workflow for handling semi-structured JSON data. Write a script that:
+1. Creates a table called COCO_LAB.RAW.EVENTS with a single VARIANT column called event_data, plus an ingested_at TIMESTAMP_NTZ column defaulting to CURRENT_TIMESTAMP
+2. Inserts 10 rows of realistic user event JSON objects — each should have: event_id, event_type (page_view / add_to_cart / purchase / login), user_id, session_id, timestamp, and a nested properties object with context-appropriate fields
+3. Writes 5 queries that extract data from the VARIANT column using colon notation and dot notation, showing how to access nested fields, flatten arrays, cast types with ::, and use FLATTEN for array expansion
+4. Creates a flattened view called COCO_LAB.ANALYTICS.V_EVENTS_FLAT that exposes the JSON as structured columns
+
+Add thorough comments explaining the colon and dot notation syntax.`
+      },
+      {
+        label: "Task 4 — Concept: Data Ingestion Patterns",
+        title: "Ask CoCo to explain all Snowflake data ingestion methods",
+        type: "concept",
+        prompt: `Explain all the ways data can be loaded into Snowflake. Cover:
+- COPY INTO from internal stage vs external stage (S3, GCS, Azure Blob)
+- Snowpipe for continuous/micro-batch loading — how it works and when to use it
+- The PUT command for pushing files from local machine to internal stage
+- External Tables — what they are and when to use them vs loading data
+- Snowflake Connector for Kafka
+- Third-party ETL tools (Fivetran, dbt, Airbyte) and how they interact with Snowflake
+- Direct INSERT, MERGE, and COPY INTO TABLE from query
+
+For each method: explain the use case, the pros and cons, and give an example scenario where you would choose it over the others.`
+      }
+    ]
+  },
+
+  {
+    day: 4, title: "SQL Mastery — Joins, Aggregations & Window Functions",
+    tasks: [
+      {
+        label: "Task 1 — Advanced Joins",
+        title: "Ask CoCo to write every type of join using your sales tables",
+        type: "sql",
+        prompt: `Using the tables in COCO_LAB.RAW (CUSTOMERS, PRODUCTS, ORDERS, ORDER_ITEMS), write SQL examples demonstrating every join type available in Snowflake with a real business question for each:
+1. INNER JOIN — customers who have placed at least one order
+2. LEFT OUTER JOIN — all customers including those who never ordered, with order count (show 0 for no orders)
+3. RIGHT OUTER JOIN — all products including those never purchased
+4. FULL OUTER JOIN — all customers and all products, showing gaps
+5. CROSS JOIN — limited to show 5 customers x 5 products combinations (a price matrix style output)
+6. SELF JOIN — customers from the same city as other customers (show customer pairs)
+7. ANTI JOIN using NOT EXISTS — customers who have never placed any Completed order
+
+For each query: add a comment explaining the business question, why that join type was chosen, and what the NULL values in the output represent.`
+      },
+      {
+        label: "Task 2 — Window Functions Deep Dive",
+        title: "Ask CoCo to write comprehensive window function examples",
+        type: "sql",
+        prompt: `Write 10 SQL queries using Snowflake window functions on the COCO_LAB.ANALYTICS.V_SALES_SUMMARY view. Cover:
+
+1. ROW_NUMBER() — rank each customer's orders by date (most recent = 1)
+2. RANK() and DENSE_RANK() — rank products by revenue, show the difference when there are ties
+3. LAG() — show each order's revenue vs the previous order's revenue for the same customer, and the difference
+4. LEAD() — show what the customer's next order value will be
+5. SUM() OVER() — running total of revenue by order date across all orders
+6. SUM() OVER(PARTITION BY) — running total of revenue per customer across their orders
+7. AVG() OVER() with ROWS BETWEEN — 3-month rolling average revenue
+8. FIRST_VALUE() and LAST_VALUE() — first and last order value per customer
+9. PERCENT_RANK() — what percentile is each customer in terms of total lifetime revenue
+10. NTILE(4) — divide customers into 4 revenue quartiles
+
+Each query should have a clear comment explaining the business use case.`
+      },
+      {
+        label: "Task 3 — CTEs and Nested Subqueries",
+        title: "Ask CoCo to demonstrate complex CTE patterns",
+        type: "sql",
+        prompt: `Write 4 complex Snowflake SQL queries using CTEs (WITH clauses) on COCO_LAB.RAW and COCO_LAB.ANALYTICS tables:
+
+Query 1 — Customer Churn Identification: Use CTEs to find customers who placed orders in 2023 but have NOT placed any order in the last 180 days. Label them as 'At Risk of Churn'.
+
+Query 2 — Product Affinity: Use CTEs to find pairs of products that are frequently bought together in the same order (product combinations appearing in 3+ orders). Show the product pair names and co-purchase count.
+
+Query 3 — Revenue Attribution: Use CTEs to calculate what percentage of total 2024 revenue came from the top 20% of customers (Pareto analysis). Show the 80/20 breakdown.
+
+Query 4 — Cohort Retention: Group customers by their signup month (cohort), then for each cohort show how many placed a 2nd order within 30 days, 60 days, and 90 days.
+
+Use multiple CTEs in each query, named clearly. Add comments explaining each CTE's purpose.`
+      },
+      {
+        label: "Task 4 — Concept: Query Optimization",
+        title: "Ask CoCo to explain Snowflake query optimization techniques",
+        type: "concept",
+        prompt: `Explain Snowflake query optimization and performance tuning. Cover:
+- How Snowflake's micro-partition pruning works and why clustering matters
+- What EXPLAIN PLAN shows and how to read it
+- When to use CLUSTER BY and the difference between automatic and manual clustering
+- How to use QUERY_HISTORY to find slow queries
+- The impact of warehouse size on query speed and cost
+- Why SELECT * is bad in Snowflake specifically
+- How result caching works (query result cache, local disk cache, remote disk cache)
+- When to use MATERIALIZED VIEWs vs regular views vs tables
+
+Give concrete before/after examples showing how a slow query can be made faster.`
+      }
+    ]
+  },
+
+  {
+    day: 5, title: "Snowflake Functions — Date, String & Conditional",
+    tasks: [
+      {
+        label: "Task 1 — Date & Time Functions Mastery",
+        title: "Ask CoCo to write a complete date function reference using your data",
+        type: "sql",
+        prompt: `Write a comprehensive SQL script using Snowflake date and time functions on the COCO_LAB.RAW.ORDERS table (order_date column). Demonstrate:
+1. DATEADD, DATEDIFF, DATE_TRUNC (to day, week, month, quarter, year)
+2. YEAR(), MONTH(), DAY(), DAYOFWEEK(), DAYOFYEAR(), WEEKOFYEAR(), QUARTER()
+3. TO_DATE(), TO_TIMESTAMP(), TO_CHAR() for formatting dates as strings in various formats
+4. LAST_DAY(), NEXT_DAY(), PREVIOUS_DAY()
+5. TIMESTAMPDIFF and calculating business days between two dates
+6. Converting between timezones using CONVERT_TIMEZONE()
+7. BETWEEN for date range filtering vs >= and <= 
+8. Calculating age in years from signup_date
+9. Grouping orders by fiscal quarter (assume fiscal year starts April 1)
+10. Finding orders placed on weekends
+
+For every function show the input and what the output looks like using a SELECT that shows the original column and the transformed value side by side.`
+      },
+      {
+        label: "Task 2 — String Functions Workshop",
+        title: "Ask CoCo to write string manipulation queries using your customer data",
+        type: "sql",
+        prompt: `Write a SQL script demonstrating Snowflake string functions on COCO_LAB.RAW.CUSTOMERS. Show:
+1. UPPER, LOWER, INITCAP on customer names
+2. TRIM, LTRIM, RTRIM — simulate cleaning dirty data with extra spaces
+3. LEFT, RIGHT, SUBSTR, MID — extracting domain from email, area code from phone
+4. CONCAT and the || operator — building full names, formatted addresses
+5. LENGTH, CHAR_LENGTH
+6. REPLACE, TRANSLATE — replacing characters
+7. LIKE and ILIKE for pattern matching — find all Gmail customers, all customers whose name starts with 'A'
+8. REGEXP_LIKE, REGEXP_SUBSTR, REGEXP_REPLACE — validate email format, extract numeric order IDs from mixed strings
+9. SPLIT_PART — extract first name from email address (before @)
+10. LPAD, RPAD — zero-pad order IDs to 8 characters
+11. CONTAINS, STARTSWITH, ENDSWITH
+12. SOUNDEX — find customers whose names sound like 'Johnson'
+
+For each function show a realistic use case with a sample result.`
+      },
+      {
+        label: "Task 3 — Conditional Logic & CASE Expressions",
+        title: "Ask CoCo to write advanced CASE and IFF expressions",
+        type: "sql",
+        prompt: `Write SQL queries using conditional logic on COCO_LAB tables. Demonstrate:
+1. Simple CASE WHEN — classify orders by value: Under $50 = 'Small', $50-$200 = 'Medium', over $200 = 'Large'
+2. Searched CASE WHEN with multiple conditions — classify customers as 'New' (<30 days), 'Active' (ordered in last 90 days), 'Dormant' (90-180 days), 'Lost' (over 180 days)
+3. IFF() shorthand — is_high_value flag for customers with lifetime_value > 500
+4. DECODE() — translate status codes to readable labels
+5. NVL() and NVL2() — replace NULL discount with 0
+6. COALESCE() — pick first non-null from a list of fallback columns
+7. NULLIF() — turn zero values into NULL for safe division
+8. ZEROIFNULL() and NULLIFZERO()
+9. GREATEST() and LEAST() — find the most expensive item in each order using multiple columns
+10. Nested CASE WHEN — create a dynamic pricing tier label based on category AND unit_price combined
+
+Show each result with before/after columns to make the transformation clear.`
+      },
+      {
+        label: "Task 4 — Concept: Snowflake Caching & Cost Management",
+        title: "Ask CoCo to explain how to manage costs and use caching effectively",
+        type: "concept",
+        prompt: `Explain Snowflake cost management and caching in detail. I want to understand:
+- The three layers of caching in Snowflake: Result Cache, Local Disk Cache (SSD), Remote Disk Cache — how each works and how long results are cached
+- How to tell from QUERY_HISTORY whether a query used the result cache (what is the partitions_scanned vs partitions_total ratio?)
+- How credit consumption works: X-Small = 1 credit/hour, and what a credit costs
+- How to use Resource Monitors to set credit limits and get alerts
+- AUTO_SUSPEND and AUTO_RESUME — best settings for dev vs production workloads
+- Multi-cluster warehouses — when do you need them and what is the extra cost?
+- How to use QUERY_ACCELERATION_SERVICE for long-running queries
+- Top 5 mistakes that cause unexpected Snowflake bills and how to avoid them
+
+Give a concrete monthly cost estimate example for a startup using Snowflake.`
+      }
+    ]
+  },
+
+  {
+    day: 6, title: "Snowflake Tasks, Streams & Data Pipelines",
+    tasks: [
+      {
+        label: "Task 1 — Creating Tasks for Scheduled SQL",
+        title: "Ask CoCo to build a scheduled task pipeline",
+        type: "sql",
+        prompt: `Write a complete Snowflake SQL script that creates a data pipeline using Tasks. The pipeline should:
+1. Create a STAGING table called COCO_LAB.STAGING.DAILY_SALES_SNAPSHOT that captures a daily snapshot of revenue metrics
+2. Create a ROOT TASK called COCO_LAB.RAW.DAILY_PIPELINE_TASK that runs every day at 6 AM UTC using a CRON schedule, which populates the snapshot table by joining ORDERS and ORDER_ITEMS
+3. Create a CHILD TASK called DAILY_ANOMALY_FLAG_TASK that depends on the root task and flags any day where revenue is more than 2 standard deviations from the 30-day rolling average
+4. Show how to RESUME and SUSPEND tasks
+5. Show how to check task run history using TASK_HISTORY() table function
+6. Show how to manually trigger a task with EXECUTE TASK
+7. Show how to view the task DAG with SHOW TASKS
+
+Include comments explaining how task scheduling, serverless tasks, and task dependencies work.`
+      },
+      {
+        label: "Task 2 — Streams for Change Data Capture",
+        title: "Ask CoCo to implement a full CDC workflow using Streams",
+        type: "sql",
+        prompt: `Write a complete Snowflake SQL script demonstrating Change Data Capture using Streams:
+1. Create a STREAM on COCO_LAB.RAW.ORDERS called ORDERS_STREAM to track all INSERT, UPDATE, DELETE changes
+2. Simulate changes: INSERT 3 new orders, UPDATE the status of 2 existing orders, DELETE 1 order
+3. Query the stream to see the METADATA$ACTION, METADATA$ISUPDATE, and METADATA$ROW_ID columns
+4. Create a TARGET audit table called COCO_LAB.STAGING.ORDERS_AUDIT with columns for operation_type, changed_at, and all order columns
+5. Write a MERGE INTO statement that consumes the stream and writes changes to the audit table, correctly handling INSERT, UPDATE, and DELETE cases
+6. Combine the stream with a Task to create an automated CDC pipeline that runs every 15 minutes
+7. Show how to check if a stream has data using SYSTEM$STREAM_HAS_DATA()
+
+Add comments explaining why streams are stateful and what happens when no task consumes them.`
+      },
+      {
+        label: "Task 3 — Dynamic Tables (Modern Alternative to Streams+Tasks)",
+        title: "Ask CoCo to create a Dynamic Table-based pipeline",
+        type: "sql",
+        prompt: `Write a SQL script demonstrating Snowflake Dynamic Tables, the modern declarative approach to building data pipelines:
+1. Create a Dynamic Table called COCO_LAB.ANALYTICS.DT_CUSTOMER_REVENUE that aggregates total revenue per customer and refreshes with a TARGET_LAG of '1 hour'
+2. Create a second Dynamic Table called DT_DAILY_PRODUCT_SUMMARY that builds on DT_CUSTOMER_REVENUE (showing how Dynamic Tables can chain) with a TARGET_LAG of '2 hours'
+3. Show how to query DYNAMIC_TABLE_REFRESH_HISTORY() to see refresh history
+4. Show the SHOW DYNAMIC TABLES command output
+5. Alter the TARGET_LAG to '30 minutes' on the first table
+6. Compare Dynamic Tables vs Streams+Tasks approach: write a comment block explaining the pros, cons, and when to choose each
+
+Use CREATE OR REPLACE DYNAMIC TABLE syntax and include the WAREHOUSE clause.`
+      },
+      {
+        label: "Task 4 — Concept: Snowflake Pipeline Architecture",
+        title: "Ask CoCo to compare pipeline architecture patterns",
+        type: "concept",
+        prompt: `Explain and compare all the pipeline orchestration options in Snowflake:
+- Tasks + Streams (traditional CDC approach)
+- Dynamic Tables (declarative approach, new)
+- Snowpipe (event-driven continuous ingestion)
+- Snowpipe Streaming (low-latency row-by-row ingestion)
+- External Orchestration with Airflow or dbt — how they interact with Snowflake tasks
+
+For each approach explain: latency (how fresh is the data?), cost model (when are you charged?), complexity to set up, and the ideal use case.
+
+Then give me a decision tree: IF my data arrives as files every hour → use X, IF I need sub-minute latency → use Y, IF I want the simplest declarative setup → use Z.`
+      }
+    ]
+  },
+
+  {
+    day: 7, title: "Snowflake Governance — Roles, Time Travel & Cloning",
+    tasks: [
+      {
+        label: "Task 1 — Role-Based Access Control",
+        title: "Ask CoCo to build a full RBAC setup for your lab",
+        type: "sql",
+        prompt: `Write a complete Snowflake RBAC setup script for a fictional company using COCO_LAB. Create:
+1. Custom roles: DATA_ENGINEER_ROLE, DATA_ANALYST_ROLE, BI_READER_ROLE, DATA_STEWARD_ROLE
+2. A role hierarchy: DATA_ENGINEER_ROLE → SYSADMIN, DATA_ANALYST_ROLE → DATA_ENGINEER_ROLE, BI_READER_ROLE → DATA_ANALYST_ROLE
+3. Grant DATA_ENGINEER_ROLE: full access on COCO_LAB (all schemas, all tables, create/modify objects)
+4. Grant DATA_ANALYST_ROLE: SELECT on COCO_LAB.ANALYTICS (read-only on analytical views), USAGE on COCO_WH
+5. Grant BI_READER_ROLE: SELECT only on specific views (V_SALES_SUMMARY, V_CUSTOMER_KPIs, V_PRODUCT_PERFORMANCE)
+6. Simulate granting a role to a hypothetical user: GRANT ROLE DATA_ANALYST_ROLE TO USER 'john_analyst'
+7. Show all grants on a role using SHOW GRANTS
+8. Demonstrate OBJECT-LEVEL PRIVILEGES vs SCHEMA-level FUTURE GRANTS (use GRANT FUTURE ... ON ALL TABLES syntax)
+
+Add a comment block at the top explaining the principle of least privilege.`
+      },
+      {
+        label: "Task 2 — Time Travel & Undrop",
+        title: "Ask CoCo to demonstrate Time Travel with real examples",
+        type: "sql",
+        prompt: `Write a complete demonstration of Snowflake Time Travel on COCO_LAB.RAW.ORDERS:
+1. Check and set the DATA_RETENTION_TIME_IN_DAYS to 3 days for the table
+2. Run a simulated mistake: UPDATE all orders SET status = 'CANCELLED' (a catastrophic accidental update)
+3. Use AT(OFFSET => -300) to query what the table looked like 5 minutes ago
+4. Use BEFORE(STATEMENT => '<query_id>') to query the state before a specific statement — show the syntax even with a placeholder query_id
+5. Create a CLONE of the table at a point before the mistake: CREATE TABLE ORDERS_BACKUP CLONE ORDERS AT(OFFSET => -300)
+6. Use the clone to RESTORE data: show the UPDATE/INSERT logic to restore from backup back to the original table
+7. Demonstrate UNDROP TABLE on a dropped test table
+8. Show how to find query IDs from QUERY_HISTORY to use with BEFORE(STATEMENT)
+
+Add a dramatic narrative in comments: "You just accidentally deleted all your orders — here is how to recover in 3 minutes."` 
+      },
+      {
+        label: "Task 3 — Zero-Copy Cloning for Dev/Test",
+        title: "Ask CoCo to build a complete dev/test cloning workflow",
+        type: "sql",
+        prompt: `Write a SQL script demonstrating Snowflake Zero-Copy Cloning for a dev/test workflow:
+1. Clone the entire COCO_LAB database into a DEV_COCO_LAB database (instant, zero-cost initial clone)
+2. Clone just the RAW schema into a TEST_RAW schema within COCO_LAB
+3. Clone a single table ORDERS into ORDERS_TEST_COPY
+4. Explain in comments WHY cloning costs no additional storage until data diverges
+5. Show that changes to the clone do NOT affect the source: update 5 rows in ORDERS_TEST_COPY and prove the original ORDERS is unchanged
+6. Show how to use clones to test a destructive migration: simulate dropping a column in the clone, then checking it does not affect the original
+7. Show how to schedule a nightly CLONE refresh: drop and recreate the clone to sync it with production
+8. Use SHOW CLONES or INFORMATION_SCHEMA to list all clones of a table
+
+Use this as the script for a data engineering team that wants fast, free staging environments.`
+      },
+      {
+        label: "Task 4 — Concept: Data Governance in Snowflake",
+        title: "Ask CoCo to explain the full Snowflake governance stack",
+        type: "concept",
+        prompt: `Give me a comprehensive overview of Snowflake's data governance features. Explain:
+- Dynamic Data Masking: what it is, how to create a masking policy, how to apply it to a column, and show a before/after for a PII column like email or phone number
+- Row Access Policies: how to filter rows based on the current user's role so that a sales rep only sees their own region's data
+- Object Tagging: how to tag tables and columns with business metadata (e.g., tag a column as PII or CONFIDENTIAL)
+- Data Classification: Snowflake's automated PII detection
+- Column-Level Security vs Row-Level Security — when to use which
+- Audit Logging: using ACCESS_HISTORY and LOGIN_HISTORY in ACCOUNT_USAGE
+- Snowflake Horizon: what it is as an umbrella governance framework
+
+Give practical, real-world examples for a financial services company that must comply with GDPR.`
+      }
+    ]
+  },
+
+  // ====== WEEK 2 ======
+  { week: 2, weekTitle: "Cortex AI Functions in Action", weekSub: "Days 8–14 · Run Cortex AI functions directly in SQL — no configuration needed, just prompts and queries" },
+
+  {
+    day: 8, title: "Cortex COMPLETE — Text Generation in SQL",
+    tasks: [
+      {
+        label: "Task 1 — First COMPLETE Calls",
+        title: "Ask CoCo to run COMPLETE with multiple models and compare outputs",
+        type: "sql",
+        prompt: `Write and run SQL queries using SNOWFLAKE.CORTEX.COMPLETE() in COCO_LAB. Demonstrate:
+1. Basic completion: ask the model 'Explain what Snowflake Cortex Analyst does in 2 sentences' using the 'mistral-large2' model
+2. The same prompt using 'llama3.1-70b' model — compare the output style
+3. The same prompt using 'snowflake-arctic' model
+4. A business task: given a customer complaint text, ask the model to write a professional apology email response
+5. A creative task: ask the model to write 3 different product description variations for 'Wireless Noise-Cancelling Headphones, $149'
+6. Use the OPTIONS parameter to set temperature=0.3 for more deterministic output vs temperature=0.9 for creative output — show the difference on the same prompt
+7. Show the SHOW MODELS IN SCHEMA SNOWFLAKE.CORTEX command to list all available models with their context windows
+
+Run each as a standalone SELECT and label outputs clearly using column aliases.`
+      },
+      {
+        label: "Task 2 — Batch COMPLETE on Table Columns",
+        title: "Ask CoCo to run COMPLETE across an entire table column",
+        type: "sql",
+        prompt: `Using COCO_LAB.RAW.PRODUCTS table (or create it if it does not exist with 10 product rows), write SQL that:
+1. Runs SNOWFLAKE.CORTEX.COMPLETE() on each row's product_name and category to auto-generate a 50-word marketing description for each product
+2. Stores the result in a new table COCO_LAB.AI_OUTPUTS.PRODUCT_DESCRIPTIONS with columns: product_id, product_name, category, ai_generated_description, generated_at (CURRENT_TIMESTAMP), model_used
+3. Creates an INSERT INTO ... SELECT statement that processes all products in one batch
+4. Adds a second column that generates a 10-word SEO meta title for each product using the same COMPLETE call but with a different prompt
+5. Shows a final SELECT of the AI_OUTPUTS table with well-formatted output
+
+If COCO_LAB.AI_OUTPUTS schema does not exist, create it first. Use CREATE TABLE IF NOT EXISTS.`
+      },
+      {
+        label: "Task 3 — Multi-Turn Conversation with COMPLETE",
+        title: "Ask CoCo to demonstrate multi-turn conversation format with COMPLETE",
+        type: "sql",
+        prompt: `Show me how to use SNOWFLAKE.CORTEX.COMPLETE() in multi-turn conversation mode using the messages array format. Write SQL that:
+1. Runs a conversation where you first set a system prompt: 'You are a senior data analyst at an e-commerce company. Always answer in bullet points and always reference specific numbers.'
+2. Then sends a user message: 'What are the most important KPIs I should track for an e-commerce business?'
+3. Then adds the assistant's previous response (simulate it) and asks a follow-up: 'For the revenue KPI you mentioned, how would I calculate it in SQL on a Snowflake orders table?'
+4. Shows the complete OBJECT_CONSTRUCT and ARRAY_CONSTRUCT syntax needed to build the messages array in Snowflake SQL
+5. Runs all three turns as sequential SELECTs showing the full conversation flow
+
+Use 'mistral-large2' model and temperature 0.2.`
+      },
+      {
+        label: "Task 4 — Concept: LLMs & Tokens",
+        title: "Ask CoCo to explain how LLMs work at a practical level for data engineers",
+        type: "concept",
+        prompt: `Explain Large Language Models (LLMs) to me as a data engineer — not as an AI researcher. Cover:
+- What tokens are and why they matter for cost (Snowflake Cortex charges per token)
+- What a context window is and what happens when you exceed it
+- Temperature: what does it control and what values should I use for different tasks (0.0 for factual SQL generation, 0.7 for creative writing, etc.)
+- The difference between instruction-following models and base models
+- Why model choice matters: when would I use mistral-large2 vs llama3.1-70b vs snowflake-arctic?
+- What prompt engineering is and the 3 most impactful techniques: zero-shot, few-shot, chain-of-thought
+- What hallucination is and how to reduce it in SQL-generation tasks specifically
+- How RAG (Retrieval-Augmented Generation) relates to Cortex Search
+
+Keep the explanation practical and grounded in the Snowflake Cortex context.`
+      }
+    ]
+  },
+
+  {
+    day: 9, title: "Cortex SENTIMENT, SUMMARIZE & TRANSLATE",
+    tasks: [
+      {
+        label: "Task 1 — Sentiment Analysis Pipeline",
+        title: "Ask CoCo to build a complete sentiment analysis pipeline",
+        type: "sql",
+        prompt: `Build a complete sentiment analysis pipeline in COCO_LAB using Snowflake Cortex. Write SQL that:
+1. Creates a table COCO_LAB.RAW.CUSTOMER_REVIEWS with columns: review_id, product_id, customer_id, review_text, review_date, star_rating (1–5). Insert 20 realistic review texts — mix of very positive, neutral, mixed, and very negative. Include some nuanced ones like sarcastic reviews or reviews with mixed sentiment.
+2. Runs SNOWFLAKE.CORTEX.SENTIMENT(review_text) on all rows to get a sentiment score (-1 to 1)
+3. Creates a new table COCO_LAB.AI_OUTPUTS.REVIEWS_ENRICHED storing: all original columns + sentiment_score + sentiment_label (Positive if > 0.3, Negative if < -0.3, Neutral otherwise) + processed_at timestamp
+4. Writes an aggregation query: average sentiment by product_id, star_rating correlation with sentiment score, and identifies the most negative and most positive products
+5. Finds cases where sentiment score DISAGREES with star_rating (e.g. 5 stars but negative sentiment) — these are sarcastic or misleading reviews
+6. Creates a VIEW called V_SENTIMENT_DASHBOARD that can be used for ongoing monitoring`
+      },
+      {
+        label: "Task 2 — Document Summarization at Scale",
+        title: "Ask CoCo to run SUMMARIZE across documents and create a summary dashboard",
+        type: "sql",
+        prompt: `Write a SQL script using SNOWFLAKE.CORTEX.SUMMARIZE() in COCO_LAB. 
+1. Create a table COCO_LAB.RAW.SUPPORT_TICKETS with columns: ticket_id, customer_id, subject, full_description (long text, 200-400 words each), submitted_at, resolved_at, agent_id. Insert 10 realistic support ticket descriptions covering: refund disputes, shipping problems, product defects, billing confusion, account access issues.
+2. Run SUMMARIZE on each ticket's full_description to get a 2-3 sentence summary
+3. Also run COMPLETE with a custom prompt to extract: issue_category (one of 5 predefined categories), urgency_level (Low/Medium/High/Critical), and suggested_next_action — all in a single COMPLETE call using JSON output format
+4. Parse the JSON output from COMPLETE using PARSE_JSON() and TRY_PARSE_JSON() and extract the individual fields into separate columns
+5. Store everything in COCO_LAB.AI_OUTPUTS.TICKETS_PROCESSED
+6. Write a final summary report query: tickets per category, average resolution time per urgency level, and list of unresolved Critical tickets with their AI summary`
+      },
+      {
+        label: "Task 3 — Translation Workflow",
+        title: "Ask CoCo to build a multilingual product catalog using TRANSLATE",
+        type: "sql",
+        prompt: `Build a multilingual content pipeline using SNOWFLAKE.CORTEX.TRANSLATE() in COCO_LAB:
+1. Use the COCO_LAB.RAW.PRODUCTS table's product_name and descriptions (or add a description column with sample text if missing)
+2. Translate each product name and description from English into: French ('en', 'fr'), Spanish ('en', 'es'), German ('en', 'de'), and Japanese ('en', 'ja')
+3. Store all translations in a COCO_LAB.AI_OUTPUTS.PRODUCT_CATALOG_MULTILINGUAL table with columns: product_id, language_code, language_name, translated_name, translated_description, translated_at
+4. Use a UNION ALL or CROSS JOIN with a language list table to process all 4 languages efficiently in a single query rather than 4 separate queries
+5. Create a VIEW V_PRODUCT_BY_LANGUAGE that allows filtering by language_code to simulate a localized product page
+6. Run a final check: count of translations per language to verify all products were translated`
+      },
+      {
+        label: "Task 4 — EXTRACT_ANSWER for Document Q&A",
+        title: "Ask CoCo to build a Q&A system using EXTRACT_ANSWER",
+        type: "sql",
+        prompt: `Build a document question-answering system using SNOWFLAKE.CORTEX.EXTRACT_ANSWER() in COCO_LAB:
+1. Create a table COCO_LAB.RAW.PRODUCT_FAQS with columns: faq_id, product_id, product_name, full_faq_document (a 300-word FAQ text for each product). Insert 5 realistic product FAQ documents for different products.
+2. Create a table COCO_LAB.RAW.CUSTOMER_QUESTIONS with columns: question_id, product_id, customer_question. Insert 15 realistic customer questions like 'Does this product have a warranty?', 'What is the return policy?', 'Is this waterproof?'
+3. Join the two tables and run EXTRACT_ANSWER(faq_document, customer_question) to answer each question from the relevant FAQ
+4. Compare EXTRACT_ANSWER vs COMPLETE for the same Q&A task — run both on 3 questions and compare the quality and format of answers
+5. Flag questions where EXTRACT_ANSWER returns NULL or an empty result (meaning the FAQ doesn't contain the answer) — these need human escalation
+6. Build a stored procedure stub (using Snowflake Scripting) that takes a product_id and question as inputs and returns the answer`
+      }
+    ]
+  },
+
+  {
+    day: 10, title: "AI SQL Functions — AI_EXTRACT, AI_CLASSIFY, AI_AGG",
+    tasks: [
+      {
+        label: "Task 1 — AI_EXTRACT for Structured Data Extraction",
+        title: "Ask CoCo to use AI_EXTRACT to pull structure from messy text",
+        type: "sql",
+        prompt: `Write SQL demonstrating AI_EXTRACT() (the modern AISQL function) in COCO_LAB. 
+1. Create a table COCO_LAB.RAW.RAW_INVOICES with a single column 'invoice_text' containing 10 rows of messy, unstructured invoice text like: 'Invoice from TechCorp dated March 15 2024 for 3 units of USB-C Hub at $29.99 each, total $89.97, due April 14 2024, ship to 123 Main St Chicago IL'
+2. Use AI_EXTRACT() to extract structured fields from each invoice: vendor_name, invoice_date, due_date, quantity, product_name, unit_price, total_amount, shipping_address — returned as a structured VARIANT/JSON
+3. Parse the extracted JSON into separate typed columns using PARSE_JSON and COLON notation
+4. Store the clean structured data in COCO_LAB.AI_OUTPUTS.INVOICES_STRUCTURED
+5. Run a validation: compare cases where extraction confidence seems low (e.g. NULL fields) vs complete extractions
+6. Show how AI_EXTRACT handles ambiguous or incomplete invoices (insert 2 deliberately vague invoice texts)`
+      },
+      {
+        label: "Task 2 — AI_CLASSIFY for Multi-Class Text Classification",
+        title: "Ask CoCo to use AI_CLASSIFY to classify content at scale",
+        type: "sql",
+        prompt: `Write SQL using AI_CLASSIFY() in COCO_LAB to build a content classification system:
+1. Use COCO_LAB.RAW.SUPPORT_TICKETS (or create with 15 realistic ticket descriptions)
+2. Run AI_CLASSIFY() to classify each ticket into one of: ['Billing', 'Shipping', 'Product Defect', 'Account Access', 'Returns & Refunds', 'Technical Support']
+3. Also run AI_CLASSIFY() on the same tickets with a different label set to assign urgency: ['Urgent', 'Standard', 'Low Priority']
+4. Compare the AI classification vs a simple CASE WHEN keyword-matching approach on the same tickets — write both and show where they differ
+5. Store classified results in COCO_LAB.AI_OUTPUTS.TICKETS_CLASSIFIED with both category and urgency columns
+6. Write an aggregate report: ticket count and percentage per category, and identify the category with the longest average description length (suggesting more complex issues)
+7. Flag tickets where the AI-assigned category contradicts the manually entered subject line`
+      },
+      {
+        label: "Task 3 — AI_AGG for Group-Level Insights",
+        title: "Ask CoCo to use AI_AGG to generate insights across grouped data",
+        type: "sql",
+        prompt: `Write SQL demonstrating AI_AGG() in COCO_LAB — the function that aggregates text across many rows and generates insights:
+1. Use COCO_LAB.RAW.CUSTOMER_REVIEWS: for each product_id, aggregate all review texts and ask AI_AGG() to 'Summarize the key themes across all customer reviews for this product. List the top 3 complaints and top 3 praised aspects as bullet points.'
+2. Use AI_AGG() on COCO_LAB.RAW.SUPPORT_TICKETS grouped by agent_id: ask it to 'Describe the types of issues this support agent handles most and assess the complexity of their caseload'
+3. Use AI_SUMMARIZE_AGG() (the dedicated summarization aggregate) on all SUPPORT_TICKET descriptions to produce one executive summary paragraph of all support issues this month
+4. Compare AI_AGG() (which processes without context window limits) vs SUMMARIZE() (which has context window limits) — explain in comments when each breaks down
+5. Create a scheduled-ready query structure: a CTE-based query that could run as a daily Task to refresh the AI_OUTPUTS.PRODUCT_INSIGHTS table with fresh AI_AGG summaries`
+      },
+      {
+        label: "Task 4 — Concept: AISQL vs Classic Cortex Functions",
+        title: "Ask CoCo to compare the old and new Cortex function APIs",
+        type: "concept",
+        prompt: `Explain the difference between the classic Snowflake Cortex functions and the new AISQL functions. Specifically:
+- Classic functions: SNOWFLAKE.CORTEX.COMPLETE(), SNOWFLAKE.CORTEX.SENTIMENT(), SNOWFLAKE.CORTEX.SUMMARIZE(), SNOWFLAKE.CORTEX.TRANSLATE(), SNOWFLAKE.CORTEX.EXTRACT_ANSWER()
+- New AISQL functions: AI_COMPLETE(), AI_EXTRACT(), AI_CLASSIFY(), AI_AGG(), AI_SUMMARIZE_AGG(), AI_SENTIMENT(), AI_EMBED(), AI_SIMILARITY(), AI_REDACT()
+
+For each pair of old vs new: what changed, what is the migration path, and what new capability does the AISQL version add?
+
+Also explain: what is AI_EMBED() used for, what is AI_SIMILARITY() used for (with a practical example), and how do these connect to Cortex Search? Give a roadmap for someone using the old SENTIMENT() function who wants to migrate to AI_SENTIMENT().`
+      }
+    ]
+  },
+
+  {
+    day: 11, title: "Cortex Search — Unstructured Data Retrieval",
+    tasks: [
+      {
+        label: "Task 1 — Create a Cortex Search Service",
+        title: "Ask CoCo to set up a Cortex Search service end to end",
+        type: "sql",
+        prompt: `Write a complete SQL script to set up a Snowflake Cortex Search service in COCO_LAB:
+1. Create a source table COCO_LAB.RAW.KNOWLEDGE_BASE with columns: article_id, title, content (long text, 300+ words per article), category, author, published_date. Insert 15 realistic knowledge base articles covering topics like: 'How to request a refund', 'Shipping policy and delivery times', 'Product warranty terms', 'How to track your order', 'Return policy for electronics', etc.
+2. Create a CORTEX SEARCH SERVICE called COCO_LAB.RAW.KB_SEARCH_SERVICE on the content column, with TARGET_LAG of '1 hour', WAREHOUSE = COCO_WH, and include the title, category, author, article_id as ATTRIBUTES
+3. Show the complete CREATE CORTEX SEARCH SERVICE syntax including the ON, ATTRIBUTES, WAREHOUSE, and TARGET_LAG clauses
+4. Show how to query the search service using the SNOWFLAKE.CORTEX.SEARCH_PREVIEW() function with a natural language query: 'what is the return policy for damaged products'
+5. Show how to filter search results by category attribute
+6. Show how to check the refresh status of the search service using SHOW CORTEX SEARCH SERVICES`
+      },
+      {
+        label: "Task 2 — Query Cortex Search with SQL",
+        title: "Ask CoCo to build multiple search patterns on your knowledge base",
+        type: "sql",
+        prompt: `Build advanced search queries against the COCO_LAB.RAW.KB_SEARCH_SERVICE Cortex Search service. Write SQL that:
+1. Runs 5 different natural language search queries using SNOWFLAKE.CORTEX.SEARCH_PREVIEW() simulating real customer questions: 'can I return a product after 30 days', 'my package is late what do I do', 'warranty for headphones', 'get a refund without receipt', 'fastest shipping option available'
+2. For each search result, show the relevance score, the matched article title, and the first 200 characters of content
+3. Combine search results with COMPLETE() to generate a final answer: search for relevant articles, then pass the top result to COMPLETE() with prompt: 'Based on this policy: [article content], answer this customer question: [question]'
+4. Build a UNION of keyword search (using LIKE/ILIKE on the RAW table) vs Cortex Search semantic search on the same queries — compare which finds more relevant results
+5. Store top search results for each query in COCO_LAB.AI_OUTPUTS.SEARCH_RESULTS_LOG for analytics`
+      },
+      {
+        label: "Task 3 — AI_EMBED and Vector Similarity",
+        title: "Ask CoCo to implement vector embeddings and similarity search",
+        type: "sql",
+        prompt: `Write a SQL script demonstrating vector embeddings and similarity search in COCO_LAB using AI_EMBED() and AI_SIMILARITY():
+1. Create a table COCO_LAB.AI_OUTPUTS.PRODUCT_EMBEDDINGS with columns: product_id, product_name, description, embedding VECTOR(FLOAT, 1024)
+2. Use AI_EMBED('e5-base-v2', product_name || ' ' || description) to generate embeddings for each product from COCO_LAB.RAW.PRODUCTS
+3. Insert all product embeddings into the PRODUCT_EMBEDDINGS table
+4. Write a similarity search query: given a user query 'wireless audio accessories for travel', embed it and find the top 5 most similar products using VECTOR_COSINE_SIMILARITY() or AI_SIMILARITY()
+5. Create a function or CTE pattern that accepts any text query and returns top-N similar products
+6. Compare: the same 'wireless audio' search done with LIKE vs vector similarity — which products does each approach find differently?
+7. Show how to use this as a product recommendation engine: find products similar to a specific product_id that a customer already bought`
+      },
+      {
+        label: "Task 4 — Concept: RAG Architecture in Snowflake",
+        title: "Ask CoCo to explain RAG and how Cortex Search implements it",
+        type: "concept",
+        prompt: `Explain Retrieval-Augmented Generation (RAG) in the context of Snowflake Cortex. Cover:
+- What RAG is and why pure LLMs hallucinate without it (the knowledge cutoff problem)
+- The 3-step RAG pipeline: Retrieve relevant documents → Augment the prompt with context → Generate the answer
+- How Cortex Search implements RAG: the embedding model, the hybrid search (semantic + keyword), and the retrieval mechanism
+- Chunking: why long documents must be split into chunks before embedding, and best practices for chunk size
+- The difference between sparse retrieval (BM25/keyword) and dense retrieval (embeddings/semantic) — and why hybrid search beats both
+- How Cortex Agents combine Cortex Search (unstructured retrieval) and Cortex Analyst (structured SQL) for a unified answer
+
+Give a concrete architecture diagram in text (boxes and arrows using ASCII or description) of a complete RAG-powered customer support chatbot built on Snowflake.`
+      }
+    ]
+  },
+
+  {
+    day: 12, title: "AI_REDACT & Data Privacy with Cortex",
+    tasks: [
+      {
+        label: "Task 1 — PII Detection & Redaction",
+        title: "Ask CoCo to build a complete PII redaction pipeline",
+        type: "sql",
+        prompt: `Build a complete PII detection and redaction pipeline in COCO_LAB using AI_REDACT():
+1. Create a table COCO_LAB.RAW.CUSTOMER_MESSAGES with columns: message_id, channel (email/chat/phone), raw_message_text (containing realistic text with PII: full names, email addresses, phone numbers, credit card numbers, SSN, physical addresses, dates of birth). Insert 15 varied messages.
+2. Run AI_REDACT() on each message to automatically redact all PII types — show the redacted output
+3. Show how to specify which entity types to redact (NAME, EMAIL, PHONE, CREDIT_CARD, SSN, ADDRESS, DATE_OF_BIRTH) vs redacting all by default
+4. Store results in COCO_LAB.AI_OUTPUTS.MESSAGES_REDACTED with both raw and redacted columns plus a redacted_at timestamp
+5. Run a comparison: messages where AI_REDACT changed something vs those that had no PII (count of [REDACTED] tokens per message)
+6. Combine AI_REDACT with a Dynamic Data Masking policy: the RAW column is masked for BI_READER_ROLE users, while DATA_ENGINEER_ROLE users see the original
+7. Create a SECURE VIEW that always shows the redacted version to any user who queries it`
+      },
+      {
+        label: "Task 2 — Column-Level Masking Policies",
+        title: "Ask CoCo to implement dynamic masking policies using Cortex output",
+        type: "sql",
+        prompt: `Write a SQL script combining Snowflake governance with Cortex AI outputs in COCO_LAB:
+1. Create a masking policy called COCO_LAB.RAW.EMAIL_MASK that: shows full email to DATA_ENGINEER_ROLE, shows only domain (@gmail.com) to DATA_ANALYST_ROLE, shows '***MASKED***' to BI_READER_ROLE
+2. Apply the masking policy to COCO_LAB.RAW.CUSTOMERS.email column
+3. Verify the masking works by running SELECT email FROM CUSTOMERS with different active roles using USE ROLE
+4. Create a similar masking policy for the customer phone column that: shows full phone to engineers, shows last 4 digits (***-***-1234) to analysts, shows NULL to readers
+5. Create a ROW ACCESS POLICY called COCO_LAB.RAW.COUNTRY_FILTER_POLICY that limits which rows are visible based on a mapping table (each analyst role only sees customers from their assigned region)
+6. Show how to audit which columns have masking policies using INFORMATION_SCHEMA.POLICY_REFERENCES
+7. Demonstrate TAG-BASED MASKING: create a tag called PII_LEVEL, apply it to sensitive columns, then create a masking policy driven by the tag value`
+      },
+      {
+        label: "Task 3 — GDPR Compliance Workflow",
+        title: "Ask CoCo to build a GDPR right-to-erasure workflow using Snowflake",
+        type: "sql",
+        prompt: `Write a complete GDPR 'Right to Erasure' (right to be forgotten) workflow in COCO_LAB:
+1. Create a GDPR_ERASURE_REQUESTS table with: request_id, customer_id, request_date, requested_by, status (Pending/Processing/Completed), completed_at
+2. Insert 3 erasure requests for existing customer_ids
+3. Write a stored procedure (using Snowflake Scripting / Snowpark SQL) called PROCESS_ERASURE_REQUEST that: takes a customer_id, updates PII fields (email, first_name, last_name) to 'GDPR_ERASED_[customer_id]' across all tables (CUSTOMERS, ORDERS, CUSTOMER_REVIEWS, CUSTOMER_MESSAGES), logs the action to an AUDIT_LOG table, and marks the request as Completed
+4. Show how to verify that Time Travel does NOT re-expose the erased data after the retention period
+5. Write a GDPR_COMPLIANCE_REPORT query that shows: total erasure requests, completion rate, average time to complete, and any requests older than 30 days still Pending (SLA breach)
+6. Discuss in SQL comments the tension between GDPR right to erasure and Snowflake Time Travel/data retention`
+      },
+      {
+        label: "Task 4 — Concept: Data Privacy in AI Pipelines",
+        title: "Ask CoCo to explain privacy risks in AI/ML data pipelines",
+        type: "concept",
+        prompt: `Explain the data privacy and security risks that arise when using AI functions like Cortex on real customer data. Cover:
+- Why raw PII should NEVER be sent to LLMs even within Snowflake (the tokenization risk)
+- How to architect a privacy-safe AI pipeline: redact first, then send to AI functions
+- Snowflake's data governance boundary: does customer data leave Snowflake when using Cortex? What is their privacy commitment?
+- The difference between inference-time data (sent in prompts) and training data — Snowflake does not use your data for training
+- Synthetic data generation: how to use AI to generate realistic fake data for testing without using real PII
+- HIPAA and PCI-DSS considerations when using Cortex on healthcare or payments data
+- De-identification vs anonymization vs pseudonymization: what is the difference and which is reversible?
+
+Give me a checklist: 10 things I should verify before running any Cortex AI function on a table that might contain PII.`
+      }
+    ]
+  },
+
+  {
+    day: 13, title: "Cortex in Python — Snowpark + Cortex",
+    tasks: [
+      {
+        label: "Task 1 — Snowpark Python Setup & First Queries",
+        title: "Ask CoCo to write a complete Snowpark Python script for Cortex",
+        type: "sql",
+        prompt: `Write a complete Python script using Snowpark that connects to Snowflake and uses Cortex AI functions programmatically. The script should:
+1. Show the full connection setup using snowflake.snowpark Session with connection parameters (using placeholder credentials)
+2. Load the COCO_LAB.RAW.CUSTOMER_REVIEWS table as a Snowpark DataFrame
+3. Use the snowflake.cortex Python functions: cortex.Sentiment(), cortex.Summarize(), cortex.Complete() on DataFrame columns
+4. Chain the operations: add a sentiment_score column, add a summarized_review column, add an ai_label column from Complete()
+5. Write the enriched DataFrame back to COCO_LAB.AI_OUTPUTS.REVIEWS_PYTHON_ENRICHED
+6. Show how to run this as a Snowpark Python Stored Procedure inside Snowflake
+7. Show the CREATE PROCEDURE SQL that deploys the Python function as a stored procedure callable from SQL
+
+Include full import statements, error handling with try/except, and inline comments explaining each step.`
+      },
+      {
+        label: "Task 2 — Snowflake Notebooks with Cortex",
+        title: "Ask CoCo to build a Snowflake Notebook workflow for AI analysis",
+        type: "sql",
+        prompt: `Write a self-contained Snowflake Notebook (Python cells + SQL cells) that performs an end-to-end AI analysis. Structure it as:
+
+Cell 1 (SQL): Set context — USE ROLE, USE WAREHOUSE, USE DATABASE, USE SCHEMA
+Cell 2 (Python): Import snowflake.snowpark and snowflake.cortex, get session, load CUSTOMER_REVIEWS as dataframe, print shape and first 5 rows
+Cell 3 (Python): Apply cortex.Sentiment() to all reviews, add score column, print distribution of scores
+Cell 4 (SQL): Query the same data in SQL to cross-verify the Python results
+Cell 5 (Python): Filter reviews with sentiment < -0.3, run cortex.Complete() on each to generate a suggested response from customer service, print the top 3 complaints with suggested replies
+Cell 6 (Python): Save all results to COCO_LAB.AI_OUTPUTS.NOTEBOOK_ANALYSIS
+Cell 7 (SQL): Final summary report query
+
+Write complete code for each cell with clear # CELL N: TITLE comments.`
+      },
+      {
+        label: "Task 3 — REST API Call to Cortex Analyst",
+        title: "Ask CoCo to write a Python REST API integration with Cortex Analyst",
+        type: "sql",
+        prompt: `Write a complete Python script that calls the Snowflake Cortex Analyst REST API directly. The script should:
+1. Show the full request structure for POST /api/v2/cortex/analyst/message
+2. Build the authentication header using a Snowflake JWT token (show the pattern with placeholder values)
+3. Structure the request body with: a semantic_model_file reference pointing to a YAML in a stage, and a messages array with a single user question
+4. Send the request using the requests library with proper error handling
+5. Parse the response: extract the generated SQL from the response, the text explanation, and any error messages
+6. Execute the returned SQL against Snowflake using the Snowpark connector and return the result as a pandas DataFrame
+7. Wrap everything in a function: def ask_cortex_analyst(question: str) -> pd.DataFrame that anyone can call
+8. Show 3 example calls with different business questions
+
+Also write the equivalent SNOW CLI command using 'snow cortex analyst' if available, as an alternative to direct REST calls.`
+      },
+      {
+        label: "Task 4 — Concept: Snowpark vs SQL for AI Workloads",
+        title: "Ask CoCo to explain when to use Python vs SQL for Cortex tasks",
+        type: "concept",
+        prompt: `Explain when to use Snowpark Python vs SQL for Snowflake Cortex AI workloads. Compare:
+- SQL Cortex functions (COMPLETE, SENTIMENT, etc.): best for what kinds of tasks? What are the limitations?
+- Snowpark Python with cortex module: what does Python allow that SQL cannot? (loops, conditional logic, external API calls, custom preprocessing)
+- When would you need external Python (outside Snowflake) vs Snowpark Python (inside Snowflake)?
+- Snowpark Python UDFs: what are they, how do they differ from stored procedures, and when would you create one for AI processing?
+- Performance comparison: running SENTIMENT() on 1 million rows in SQL vs Python Snowpark — which is faster and why?
+- Cost model: stored procedures run on the warehouse (you pay compute), SQL functions are serverless (you pay per token) — when does each cost more?
+
+End with a decision flowchart in text form to help me choose the right approach for any AI processing task.`
+      }
+    ]
+  },
+
+  {
+    day: 14, title: "Week 2 Capstone — End-to-End AI Enrichment Pipeline",
+    tasks: [
+      {
+        label: "Task 1 — Design the Pipeline Architecture",
+        title: "Ask CoCo to architect a complete AI enrichment pipeline",
+        type: "concept",
+        prompt: `Design a complete, production-quality AI data enrichment pipeline in Snowflake that processes customer feedback data end-to-end. The pipeline should handle: raw customer reviews → cleaning → multiple AI enrichments → analytics → reporting.
+
+For the architecture, specify:
+1. The complete table/view/stage structure across RAW, STAGING, ANALYTICS, AI_OUTPUTS schemas
+2. Which Cortex functions to apply at each stage and why
+3. The orchestration approach (Tasks + Streams or Dynamic Tables) and the schedule
+4. The governance layer: which columns need masking, which tables need row access policies
+5. The monitoring approach: what queries to run to check pipeline health
+6. Estimated Snowflake credit cost per day if processing 1000 new reviews daily
+
+Output this as a structured architecture plan with clear sections: INGESTION → CLEANING → AI PROCESSING → STORAGE → ANALYTICS → GOVERNANCE.`
+      },
+      {
+        label: "Task 2 — Build the Complete Pipeline SQL",
+        title: "Ask CoCo to generate the full pipeline SQL end to end",
+        type: "sql",
+        prompt: `Write the complete SQL implementation for the AI enrichment pipeline designed in today's Task 1. Build it entirely in COCO_LAB and cover all layers:
+
+LAYER 1 — RAW: Create or confirm tables: CUSTOMER_REVIEWS, SUPPORT_TICKETS, CUSTOMER_MESSAGES exist with sample data
+LAYER 2 — STAGING: Create a STREAM on CUSTOMER_REVIEWS to capture new rows; create a STAGING.REVIEWS_TO_PROCESS staging table
+LAYER 3 — AI PROCESSING: Create a stored procedure PROCESS_NEW_REVIEWS that:
+  - Reads new rows from the stream
+  - Runs AI_SENTIMENT() for sentiment score
+  - Runs SNOWFLAKE.CORTEX.SUMMARIZE() for summary
+  - Runs AI_CLASSIFY() for category (Product Quality / Delivery / Customer Service / Pricing / Other)
+  - Runs AI_REDACT() on review text for a safe version
+  - Writes all results to AI_OUTPUTS.REVIEWS_ENRICHED
+LAYER 4 — TASK: Schedule the stored procedure to run every 30 minutes using a Snowflake Task
+LAYER 5 — ANALYTICS: Create a final V_FEEDBACK_360 view joining original reviews with all AI outputs for dashboarding
+
+Write complete, runnable SQL for all 5 layers.`
+      },
+      {
+        label: "Task 3 — Test & Validate the Pipeline",
+        title: "Ask CoCo to write a comprehensive pipeline test and validation suite",
+        type: "sql",
+        prompt: `Write a complete SQL test suite to validate the AI enrichment pipeline in COCO_LAB. Include:
+1. DATA QUALITY TESTS: Assert that AI_OUTPUTS.REVIEWS_ENRICHED has no NULLs in sentiment_score, category, summary columns; assert sentiment_score is between -1 and 1; assert category is always one of the 5 valid values
+2. PIPELINE COMPLETENESS TEST: Check that every review in RAW.CUSTOMER_REVIEWS has a corresponding row in AI_OUTPUTS.REVIEWS_ENRICHED (LEFT JOIN, count unmatched)
+3. PERFORMANCE TEST: Query QUERY_HISTORY to find the average and maximum execution time of the PROCESS_NEW_REVIEWS stored procedure over the last 7 days; flag if any run took longer than 5 minutes
+4. COST MONITORING: Query METERING_HISTORY and CORTEX_AISQL_USAGE_HISTORY (if available) to show credit usage by the pipeline task in the last 7 days
+5. STREAM HEALTH CHECK: Verify the CUSTOMER_REVIEWS stream is not falling behind — alert if stream lag exceeds 2 hours
+6. REGRESSION TEST: Insert 5 new test reviews with known content (e.g., a clearly positive review and a clearly negative one) and verify the AI-assigned sentiment matches expectation
+
+Format as a test script with PASS/FAIL outputs using CASE WHEN.`
+      },
+      {
+        label: "Task 4 — Reflection & Optimization",
+        title: "Ask CoCo to review your Week 2 work and suggest improvements",
+        type: "concept",
+        prompt: `Review everything I have built in the past two weeks in COCO_LAB — the tables, views, AI pipelines, governance policies, and stored procedures. Based on Snowflake Cortex best practices:
+1. What are the 5 most common mistakes people make when building Cortex AI pipelines in Snowflake, and how do I check if I am making any of them?
+2. How should I optimize my COMPLETE() calls to reduce cost? (prompt length, model choice, batching strategies)
+3. What monitoring dashboards should I build in Snowsight to track: pipeline health, AI function costs, sentiment trends over time, and data freshness?
+4. What would a senior Snowflake architect change about my pipeline design if they reviewed it?
+5. What Snowflake Cortex features are still in Preview (not GA) that I should know about but be careful using in production?
+
+Give concrete, actionable recommendations I can implement in Weeks 3 and 4.`
+      }
+    ]
+  },
+
+  // ====== WEEK 3 ======
+  { week: 3, weekTitle: "Cortex Analyst — Text-to-SQL & Semantic Models", weekSub: "Days 15–21 · Build semantic models, natural language interfaces, and Streamlit apps powered by Cortex Analyst" },
+
+  {
+    day: 15, title: "Cortex Analyst — First Semantic Model",
+    tasks: [
+      {
+        label: "Task 1 — Understand the Semantic Model Format",
+        title: "Ask CoCo to explain and then generate a semantic model YAML",
+        type: "coco",
+        prompt: `I want to learn how to use Snowflake Cortex Analyst by building my first semantic model. Please:
+1. Explain what a Cortex Analyst semantic model YAML file is and why it is needed (what problem does it solve that just giving Cortex the table schema does not?)
+2. Describe all the components of a semantic model: tables, dimensions, time_dimensions, measures, relationships, filters, and verified_queries — explain each with a one-sentence description
+3. Generate a complete, valid semantic model YAML for the COCO_LAB.ANALYTICS.V_SALES_SUMMARY view I have in my Snowflake account. The view has: order_id, customer_first_name, customer_last_name, customer_segment, product_name, category, quantity, revenue, order_date, order_status, country
+4. Include: at least 3 measures (total_revenue, total_orders, avg_order_value), at least 4 dimensions (segment, category, country, status), 1 time dimension (order_date), and 3 verified_queries (sample questions with known correct SQL)
+5. Format the YAML exactly as Snowflake expects it, ready to be saved as a file`
+      },
+      {
+        label: "Task 2 — Deploy the Semantic Model to a Stage",
+        title: "Ask CoCo to write the SQL to upload and register the semantic model",
+        type: "sql",
+        prompt: `Write complete Snowflake SQL to deploy my Cortex Analyst semantic model. Assume I have a YAML file called 'sales_semantic_model.yaml' saved locally. Write SQL that:
+1. Creates a dedicated stage for semantic models: COCO_LAB.RAW.CORTEX_MODELS_STAGE with a directory table enabled
+2. Shows the PUT command syntax to upload the YAML file from local machine to the stage (explain this is run in SnowSQL CLI or via Snowsight file upload)
+3. Shows how to verify the file was uploaded: LIST @COCO_LAB.RAW.CORTEX_MODELS_STAGE
+4. Alternatively, shows how to create the YAML content directly in Snowflake using $$ heredoc strings and write it to a stage file using a Python stored procedure (for cases where you cannot use PUT)
+5. Shows the GRANT privilege needed so that the Cortex Analyst service can read from the stage
+6. Verifies the semantic model YAML syntax by calling the Cortex Analyst validation endpoint (if available as SQL function) or explains how to validate it via Snowsight's Cortex Analyst UI`
+      },
+      {
+        label: "Task 3 — Test Cortex Analyst via Snowsight Chat",
+        title: "Ask CoCo a series of natural language business questions to test your model",
+        type: "coco",
+        prompt: `I have deployed my Cortex Analyst semantic model for the COCO_LAB sales data. I want to test it by asking business questions. For each of the following 10 questions, tell me:
+a) What SQL you would generate to answer it
+b) What result I should expect to see
+
+Questions to test:
+1. What was total revenue last month?
+2. Which product category generated the most revenue in 2023?
+3. Show me the top 5 customers by total spend
+4. What is the month-over-month revenue growth trend for 2024?
+5. How many orders were cancelled vs completed?
+6. Which country has the highest average order value?
+7. What percentage of revenue comes from Gold segment customers?
+8. Which products have zero sales in the last 90 days?
+9. Show me daily revenue for the last 30 days
+10. What is the repeat purchase rate — how many customers placed more than 1 order?
+
+For each: show the SQL, expected output format, and any edge cases in the semantic model that might cause inaccurate results.`
+      },
+      {
+        label: "Task 4 — Add Verified Queries to the Semantic Model",
+        title: "Ask CoCo to generate 10 verified query examples for your semantic model",
+        type: "coco",
+        prompt: `Generate 10 verified_queries entries to add to my Cortex Analyst semantic model YAML for the COCO_LAB sales data. Verified queries are gold-standard question-SQL pairs that help Cortex Analyst learn the correct patterns.
+
+For each verified query provide:
+- question: the natural language question a business user would ask
+- sql: the exact correct SQL that answers it on V_SALES_SUMMARY
+- description: one line explaining what this example teaches the model
+
+Cover a variety of SQL patterns including: simple aggregation, GROUP BY with ORDER BY, time filtering with DATE_TRUNC, percentage calculations, HAVING clauses, ranking with ROW_NUMBER, and YoY comparisons.
+
+Format the output exactly as it would appear in the verified_queries section of the YAML file, ready to paste in.`
+      }
+    ]
+  },
+
+  {
+    day: 16, title: "Multi-Table Semantic Models & Relationships",
+    tasks: [
+      {
+        label: "Task 1 — Design a Multi-Table Semantic Model",
+        title: "Ask CoCo to build a semantic model spanning all 4 of your raw tables",
+        type: "coco",
+        prompt: `Generate a complete Snowflake Cortex Analyst semantic model YAML that spans multiple tables in COCO_LAB.RAW: CUSTOMERS, PRODUCTS, ORDERS, and ORDER_ITEMS. 
+
+The semantic model should:
+1. Define all 4 tables as separate table entries with their full paths (COCO_LAB.RAW.tablename)
+2. Define the relationships (joins): ORDERS → CUSTOMERS (many-to-one on customer_id), ORDER_ITEMS → ORDERS (many-to-one on order_id), ORDER_ITEMS → PRODUCTS (many-to-one on product_id)
+3. Define measures that span tables: total_revenue (SUM of ORDER_ITEMS.total_line_value), total_orders (COUNT DISTINCT ORDERS.order_id), avg_basket_size (total_revenue / total_orders), customer_count (COUNT DISTINCT CUSTOMERS.customer_id), gross_profit (revenue minus PRODUCTS.cost_price * quantity)
+4. Define dimensions: customer segment, country, product category, subcategory, order status, supplier_country
+5. Define time dimensions: order_date (from ORDERS), signup_date (from CUSTOMERS)
+6. Add 5 verified queries that join across tables
+7. Add custom_instructions telling Cortex Analyst to always filter out 'Cancelled' orders by default unless the user specifically asks about them
+
+Output as complete, ready-to-deploy YAML.`
+      },
+      {
+        label: "Task 2 — Custom Instructions for Better Accuracy",
+        title: "Ask CoCo to write custom instructions and test their impact",
+        type: "coco",
+        prompt: `I want to improve my Cortex Analyst semantic model accuracy using custom_instructions. Help me write comprehensive custom instructions for my COCO_LAB sales semantic model.
+
+Write instructions that cover:
+1. Date handling: 'When the user says last month, use DATE_TRUNC month and filter to the previous calendar month. When they say this year, use YEAR(order_date) = YEAR(CURRENT_DATE)'
+2. Revenue definition: 'Revenue always means the sum of total_line_value from ORDER_ITEMS. Never use unit_price from PRODUCTS as revenue.'
+3. Default filters: 'Always exclude orders with status = Cancelled unless the user specifically asks about cancellations or cancelled orders'
+4. Segment definitions: 'Gold customers are our highest value segment. When asked about top customers always reference customer_segment'
+5. Fiscal year: 'Our fiscal year runs from April 1 to March 31. When the user mentions fiscal year or FY, use this definition'
+6. KPI definitions: 'Conversion rate = completed_orders / total_orders. Churn = customers who have not ordered in 180+ days'
+
+Then show me 5 natural language questions where these instructions would change the SQL generated compared to without the instructions. Show both the wrong SQL (without instructions) and the correct SQL (with instructions).`
+      },
+      {
+        label: "Task 3 — Semantic Views (Alternative to YAML)",
+        title: "Ask CoCo to create a Semantic View as a modern alternative to YAML stage files",
+        type: "sql",
+        prompt: `Write SQL to create a Snowflake Semantic View as an alternative to deploying a YAML file to a stage. Semantic Views are a newer, native approach to defining semantic metadata directly in Snowflake.
+
+Write SQL that:
+1. Creates a SEMANTIC VIEW called COCO_LAB.ANALYTICS.SV_SALES using CREATE SEMANTIC VIEW syntax (if available in your Snowflake account — use the correct syntax from Snowflake documentation)
+2. Defines the base table as V_SALES_SUMMARY
+3. Adds METRIC definitions: total_revenue AS SUM(revenue), order_count AS COUNT(DISTINCT order_id), avg_order_value AS total_revenue / order_count
+4. Adds DIMENSION definitions: product_category, customer_segment, order_country, order_status
+5. Adds a TIME DIMENSION on order_date
+6. Shows how to query the semantic view directly in SQL
+7. Shows how to reference the semantic view in a Cortex Analyst API call instead of a YAML stage file path
+8. Compares the two approaches (YAML in stage vs Semantic View) in SQL comments: which is better for what use case?`
+      },
+      {
+        label: "Task 4 — Concept: What Makes a Good Semantic Model",
+        title: "Ask CoCo to explain semantic model best practices",
+        type: "concept",
+        prompt: `Explain the principles of designing a high-quality Cortex Analyst semantic model. Cover:
+- Why generic column names (col1, amt, dt) kill accuracy and what to do instead
+- The importance of descriptions on every measure and dimension — how they guide the LLM
+- When to use expressions in measures (pre-computed in YAML) vs letting Cortex generate complex SQL at runtime
+- Filter best practices: when to add default filters vs letting users specify them
+- The danger of ambiguous measures (e.g., having both 'revenue' and 'net_revenue' with no clear descriptions)
+- Verified queries: how many do you need and what patterns should they cover?
+- Multi-table models: should you use a single large denormalized view or multiple joined tables in the semantic model?
+- Testing a semantic model: how to evaluate if CoCo is generating correct SQL (precision and recall methodology)
+- The common failure modes: what questions does Cortex Analyst consistently get wrong and why?
+
+Give a checklist of 10 things to review before considering a semantic model production-ready.`
+      }
+    ]
+  },
+
+  {
+    day: 17, title: "Cortex Analyst REST API & Streamlit App",
+    tasks: [
+      {
+        label: "Task 1 — REST API Deep Dive",
+        title: "Ask CoCo to document the full Cortex Analyst API",
+        type: "coco",
+        prompt: `Give me a complete technical reference for the Snowflake Cortex Analyst REST API. Cover:
+1. The full endpoint URL structure: /api/v2/cortex/analyst/message and what account identifier format to use
+2. All request body fields: messages (format, roles), semantic_model_file (stage path format), semantic_model (inline YAML option), and any optional parameters
+3. Authentication options: JWT token vs OAuth vs Snowflake key-pair — which is easiest for development vs production?
+4. The full response structure: what fields are returned, where is the SQL, where is the text explanation, what does the error object look like?
+5. How to handle the multi-turn conversation format: show a 3-turn conversation JSON payload
+6. Rate limits: how many requests per minute, what happens when you exceed limits?
+7. Error codes: list the common HTTP error codes and what each means in the Cortex Analyst context
+8. How to call the API from: Python (requests library), curl command line, and JavaScript (fetch)
+
+Show complete code examples for each, with placeholder credentials clearly marked.`
+      },
+      {
+        label: "Task 2 — Build a Streamlit in Snowflake Chat App",
+        title: "Ask CoCo to generate a complete Streamlit app for Cortex Analyst",
+        type: "sql",
+        prompt: `Write a complete, production-quality Streamlit in Snowflake (SiS) Python application that creates a chat interface powered by Cortex Analyst. The app should:
+
+1. Have a sidebar with: app title 'COCO Analytics Assistant', a selectbox to choose which semantic model YAML to use (list files from the stage), and a 'Clear Chat' button
+2. Show a chat history of all previous messages in the session using st.chat_message() with user and assistant icons
+3. Have a chat input box at the bottom using st.chat_input()
+4. When a question is submitted: call the Cortex Analyst REST API using _snowflake.send_snow_api_request() (the SiS-native way to call Snowflake APIs without external HTTP), show a spinner while waiting
+5. Display the response: show the AI's text explanation, then show the SQL in a collapsible st.expander() code block, then execute the SQL and display results as st.dataframe() with row count shown
+6. Handle errors gracefully with st.error() messages
+7. Add a 'Was this helpful? 👍 👎' feedback widget under each response
+
+Write complete, runnable Python code with all imports, ready to paste into Snowsight Streamlit editor.`
+      },
+      {
+        label: "Task 3 — Add Charts to Streamlit Analyst App",
+        title: "Ask CoCo to add automatic chart generation to the Streamlit app",
+        type: "sql",
+        prompt: `Extend the Streamlit in Snowflake Cortex Analyst app from Task 2 to automatically generate charts based on the query results. Add:
+
+1. After displaying the dataframe, detect the shape of the result: if it has 1 date/time column and 1-2 numeric columns → line chart; if it has 1 categorical column and 1 numeric column → bar chart; if it has 2+ numeric columns → scatter chart; if it has 3+ columns of mixed types → table only
+2. Auto-generate the appropriate chart using st.line_chart(), st.bar_chart(), or st.scatter_chart() with meaningful axis labels
+3. Add an AI-powered chart title: after getting the SQL result, send a quick COMPLETE() call with prompt: 'In 8 words or less, write a chart title for this data: [column names and first 3 rows]' — display the AI-generated title above the chart
+4. Add an 'Export to CSV' download button using st.download_button() so users can download query results
+5. Add a 'Show Query Explanation' button that calls COMPLETE() to explain the SQL in plain English
+
+Write complete Python code that merges with the original app structure.`
+      },
+      {
+        label: "Task 4 — Multi-Turn Conversation Handling",
+        title: "Ask CoCo to explain and implement multi-turn conversation memory",
+        type: "coco",
+        prompt: `Explain how multi-turn conversation context works in Cortex Analyst and help me implement it correctly.
+
+Cover:
+1. What conversation history Cortex Analyst can and cannot use — it can reference previous questions and SQL patterns but cannot see query results
+2. How to structure the messages array for a 3-turn conversation: show the exact JSON with both user and analyst roles
+3. The context window limit: how many turns can you maintain before accuracy degrades?
+4. When to reset the conversation: what signals should trigger a 'clear context' action (topic change, user says 'start over', error rate increases)?
+5. Show me 3 example multi-turn conversations that work well with Cortex Analyst (drilling down progressively) vs 2 that fail (referencing result data from a previous turn)
+6. Write the Python function that manages conversation history in Streamlit session state: appending new messages, truncating old ones when approaching the context limit, and formatting the history array for the API request
+
+Give concrete code and practical guidance.`
+      }
+    ]
+  },
+
+  {
+    day: 18, title: "Advanced Cortex Analyst — Routing, Agents & Hybrid Search",
+    tasks: [
+      {
+        label: "Task 1 — Cortex Agents: Combining Analyst + Search",
+        title: "Ask CoCo to explain and configure a Cortex Agent",
+        type: "coco",
+        prompt: `Explain Snowflake Cortex Agents and help me build one that combines Cortex Analyst (structured SQL) and Cortex Search (unstructured documents) to answer hybrid questions.
+
+1. What is a Cortex Agent and how does it decide which tool to use for a given question?
+2. Show the complete API request structure for a Cortex Agent call that registers both: a Cortex Analyst tool (pointing to my sales semantic model YAML) and a Cortex Search tool (pointing to my KB_SEARCH_SERVICE knowledge base)
+3. Show example questions and which tool the agent would route to: 'What was last month's revenue?' (Analyst) vs 'What is our return policy?' (Search) vs 'Which of our top customers have open support tickets?' (both — hybrid)
+4. Show the response format: how does the agent indicate which tool it used and how does it combine results from both?
+5. Write a Python function that calls the Cortex Agent API, parses the response, and returns a combined natural language answer with citations for Search results and data tables for Analyst results
+6. What are the current limitations of Cortex Agents in preview?`
+      },
+      {
+        label: "Task 2 — Analyst Routing Mode",
+        title: "Ask CoCo to explain and test Cortex Analyst routing capabilities",
+        type: "coco",
+        prompt: `I want to understand and test Snowflake Cortex Analyst's ability to route questions to the right semantic model when I have multiple models deployed.
+
+Help me:
+1. Explain how Cortex Analyst determines which semantic model or table to query when multiple semantic models are registered — does it use the semantic model descriptions? The verified queries? The table names?
+2. Show how to configure the Cortex Agent with multiple Cortex Analyst tools (one for sales data, one for marketing data, one for support data) so it routes to the right one based on the question
+3. Write 10 ambiguous test questions that could plausibly belong to multiple semantic models and explain which one Cortex Analyst should pick and why
+4. Show how to handle a question that genuinely spans two semantic models (e.g., 'Which marketing campaigns drove the most sales revenue?') — what does the agent do?
+5. What can I put in semantic model descriptions and table descriptions to improve routing accuracy?
+6. Show the Cortex Agent API call with multiple analyst_tools listed in the tools array`
+      },
+      {
+        label: "Task 3 — Evaluation Framework for Cortex Analyst",
+        title: "Ask CoCo to build a SQL-based evaluation framework for semantic model accuracy",
+        type: "sql",
+        prompt: `Build a SQL-based evaluation framework in COCO_LAB to measure the accuracy of your Cortex Analyst semantic model. Write SQL that:
+1. Creates an EVALUATION dataset table: COCO_LAB.RAW.ANALYST_EVAL_SET with columns: question_id, natural_language_question, expected_sql, expected_result_hash (MD5 of expected output)
+2. Inserts 15 evaluation questions with known correct SQL (covering simple aggregations, GROUP BY, time filters, joins, window functions, HAVING clauses)
+3. Creates a stored procedure RUN_CORTEX_ANALYST_EVAL that: calls the Cortex Analyst REST API for each question, captures the generated SQL, executes it, computes MD5 of the result, and compares to expected_result_hash
+4. Stores results in COCO_LAB.AI_OUTPUTS.EVAL_RESULTS with: question_id, generated_sql, expected_sql, sql_match (boolean), result_match (boolean), latency_ms, eval_timestamp
+5. Writes a final accuracy report query: overall accuracy %, accuracy by question type (simple/medium/complex), and lists all questions where result_match = FALSE sorted by how often they fail
+6. Shows how to track accuracy over time as you update the semantic model (run evals after each YAML change)`
+      },
+      {
+        label: "Task 4 — Concept: Production Deployment Patterns",
+        title: "Ask CoCo to explain production readiness for Cortex Analyst",
+        type: "concept",
+        prompt: `Explain how to take a Cortex Analyst implementation from prototype to production at scale. Cover:
+- Semantic model versioning: how to manage v1, v2, v3 of your YAML file without breaking live users
+- CI/CD for semantic models: how to integrate YAML changes into a GitHub Actions or dbt-style deployment pipeline
+- Multi-environment setup: how to have dev, staging, production semantic models pointing to different databases
+- Monitoring in production: what metrics to track (question volume, latency, error rate, accuracy degradation over time)
+- Scaling: what happens to Cortex Analyst performance when 500 users hit it simultaneously? Is there a rate limit?
+- Cost at scale: how much does Cortex Analyst cost per question? How to estimate monthly cost for 10,000 questions/day?
+- Rollback strategy: how to quickly revert to a previous semantic model version if accuracy drops after an update
+- When NOT to use Cortex Analyst: what types of questions will it always fail at and what fallback should you build?
+
+Give concrete architecture diagrams (in text) for a production deployment at a mid-size company.`
+      }
+    ]
+  },
+
+  {
+    day: 19, title: "Snowflake ML — Cortex ML Functions",
+    tasks: [
+      {
+        label: "Task 1 — Forecasting with Cortex ML",
+        title: "Ask CoCo to build a time-series forecast using Cortex ML FORECAST",
+        type: "sql",
+        prompt: `Build a time-series revenue forecast using Snowflake Cortex ML FORECAST function in COCO_LAB. Write complete SQL that:
+1. Prepares the training data: create a daily revenue time series table COCO_LAB.ANALYTICS.DAILY_REVENUE_SERIES from COCO_LAB.RAW.ORDERS and ORDER_ITEMS — one row per day with columns: ds (date), y (total_revenue). Handle missing days by filling in 0 or forward-filling.
+2. Creates a SNOWFLAKE.ML.FORECAST model called COCO_LAB.ANALYTICS.REVENUE_FORECAST_MODEL using the time series data
+3. Uses the model to forecast the next 30 days of revenue: REVENUE_FORECAST_MODEL!FORECAST(FORECASTING_PERIODS => 30)
+4. Stores the forecast output in COCO_LAB.AI_OUTPUTS.REVENUE_FORECAST_30D
+5. Creates a combined view that shows: historical actual revenue + forecast + upper/lower confidence intervals on the same timeline
+6. Writes a query to identify if any historical actuals fell outside the model's confidence intervals (anomalies in hindsight)
+7. Shows how to retrain the model when new data arrives (the retrain pattern)
+
+Add comments explaining what FORECASTING_PERIODS, CONFIG_OBJECT, and PREDICTION_INTERVAL parameters do.`
+      },
+      {
+        label: "Task 2 — Anomaly Detection with Cortex ML",
+        title: "Ask CoCo to implement revenue anomaly detection",
+        type: "sql",
+        prompt: `Build a real-time anomaly detection system using Snowflake Cortex ML ANOMALY_DETECTION in COCO_LAB. Write SQL that:
+1. Uses the COCO_LAB.ANALYTICS.DAILY_REVENUE_SERIES table (or creates it) as the baseline training data
+2. Creates a SNOWFLAKE.ML.ANOMALY_DETECTION model called COCO_LAB.ANALYTICS.REVENUE_ANOMALY_MODEL
+3. Runs anomaly detection on both the training data (in-sample) and a test period
+4. The anomaly detection output should show: date, actual_revenue, is_anomaly (boolean), anomaly_score, percentile, upper/lower bound
+5. Flags days where revenue is anomalously LOW (missing data, system outage) vs anomalously HIGH (viral product, flash sale)
+6. Creates a TASK that runs anomaly detection every morning at 7am on the previous day's revenue and sends an alert by inserting into a COCO_LAB.RAW.ANOMALY_ALERTS table if is_anomaly = TRUE
+7. Write a dashboard query: the last 90 days of revenue with anomalies highlighted, showing % deviation from expected
+
+Explain in comments when you would choose ANOMALY_DETECTION vs simply using standard deviation-based methods.`
+      },
+      {
+        label: "Task 3 — Classification with Cortex ML",
+        title: "Ask CoCo to build a customer churn classifier using Cortex ML",
+        type: "sql",
+        prompt: `Build a customer churn prediction model using Snowflake Cortex ML CLASSIFICATION in COCO_LAB. Write SQL that:
+1. Creates a feature table COCO_LAB.ANALYTICS.CUSTOMER_CHURN_FEATURES with one row per customer, derived from CUSTOMERS and ORDERS: total_orders, avg_order_value, days_since_last_order, days_since_signup, order_frequency_per_month, pct_cancelled_orders, customer_segment_encoded (numeric), country_encoded (numeric), churn_label (1 if no order in last 90 days, 0 otherwise)
+2. Splits into training (80%) and test (20%) sets using a deterministic approach (e.g., MOD(customer_id, 5) != 0 for train)
+3. Creates a SNOWFLAKE.ML.CLASSIFICATION model called COCO_LAB.ANALYTICS.CHURN_MODEL on the training set
+4. Runs predictions on the test set: CHURN_MODEL!PREDICT() and shows predicted_class, predicted_probability
+5. Evaluates model performance: shows confusion matrix (true positive, false positive, true negative, false negative counts), calculates precision, recall, F1 score in SQL
+6. Applies the model to ALL current customers to score their churn risk: creates COCO_LAB.AI_OUTPUTS.CUSTOMER_CHURN_SCORES
+7. Identifies the top 20 highest-risk customers who should be targeted with retention campaigns`
+      },
+      {
+        label: "Task 4 — Concept: Cortex ML vs External ML Frameworks",
+        title: "Ask CoCo to compare Snowflake Cortex ML vs bringing your own models",
+        type: "concept",
+        prompt: `Compare Snowflake Cortex ML (built-in FORECAST, ANOMALY_DETECTION, CLASSIFICATION, REGRESSION, CONTRIBUTION_EXPLORER) against external ML approaches. Cover:
+- What Cortex ML functions are available today and what algorithm does each use under the hood?
+- When should I use Cortex ML FORECAST instead of a custom Prophet or ARIMA model?
+- The tradeoffs: Cortex ML is zero-setup but less customizable; external models give full control but require more infrastructure
+- Snowpark ML: how does it differ from Cortex ML? (Snowpark ML is for bringing sklearn, XGBoost etc. inside Snowflake)
+- Model Registry: what is the Snowflake Model Registry and how do I use it to version and deploy my own ML models?
+- Feature Store: does Snowflake have one? How do Dynamic Tables serve as a lightweight feature store?
+- MLflow integration: can I log experiments to MLflow from within Snowpark?
+- When should a company use Snowflake ML vs SageMaker vs Azure ML vs Vertex AI?
+
+Give a decision matrix for choosing the right ML approach based on: team skill level, model complexity, data volume, and cost constraints.`
+      }
+    ]
+  },
+
+  {
+    day: 20, title: "Snowflake Notebooks — AI-Powered Analytics",
+    tasks: [
+      {
+        label: "Task 1 — Build a Full Analytics Notebook",
+        title: "Ask CoCo to generate a complete multi-cell Snowflake Notebook",
+        type: "sql",
+        prompt: `Write a complete Snowflake Notebook (Python + SQL cells) that performs a full customer analytics report using AI. Structure it as a self-contained analysis document:
+
+CELL 1 (Markdown): Title: 'Customer Analytics Report — Powered by Snowflake Cortex' with date and description
+CELL 2 (SQL): Load and preview the V_CUSTOMER_KPIs view, show top-level metrics: total customers, total revenue, avg LTV
+CELL 3 (Python): Load data into pandas DataFrame, plot a histogram of customer LTV distribution using matplotlib, show percentile breakdown
+CELL 4 (SQL): Revenue by segment and country — pivot table style
+CELL 5 (Python): Use snowflake.cortex.Complete() to generate a one-paragraph executive summary of the key findings from the SQL results in Cell 4
+CELL 6 (Python): Run AI_SENTIMENT on any customer notes/reviews and show sentiment distribution by segment
+CELL 7 (SQL): Churn risk analysis — customers by days since last order bucket
+CELL 8 (Python): Plot churn risk distribution as a bar chart; add AI-generated recommendations for each risk bucket using COMPLETE()
+CELL 9 (SQL): Final data quality check — NULLs, duplicates, data freshness
+CELL 10 (Markdown): Key takeaways section with placeholder for AI-generated insights
+
+Write complete, runnable code for every cell.`
+      },
+      {
+        label: "Task 2 — Git Integration for Notebooks",
+        title: "Ask CoCo to explain and configure Git integration for Snowflake development",
+        type: "concept",
+        prompt: `Explain Snowflake Git integration and how to use it for version controlling Notebooks, Streamlit apps, and semantic model YAML files.
+
+Cover:
+1. How to create a Git Repository integration in Snowflake (CREATE GIT REPOSITORY syntax)
+2. How to connect to GitHub, GitLab, or Azure DevOps — what credentials are needed
+3. How to sync and fetch from a git repository: ALTER GIT REPOSITORY ... FETCH syntax
+4. How to reference files from a git repository stage in tasks, procedures, and Cortex Analyst semantic model paths
+5. A recommended git branching strategy for a Snowflake project: main/dev/feature branches, pull request process
+6. How to set up GitHub Actions to: run SQL migrations when code is merged to main, validate semantic model YAML syntax, run the Cortex Analyst evaluation suite as a CI step
+7. The difference between Snowflake Git integration vs using an external CI/CD pipeline that connects via the Snowflake Connector
+
+Show the key SQL commands with real syntax examples.`
+      },
+      {
+        label: "Task 3 — Snowflake Alerts & Notifications",
+        title: "Ask CoCo to set up an alerting system for your AI pipeline",
+        type: "sql",
+        prompt: `Write SQL to set up a complete alerting and notification system for the COCO_LAB AI pipeline. Include:
+1. A SNOWFLAKE ALERT called COCO_LAB.RAW.REVENUE_DROP_ALERT that: runs every hour, checks if today's revenue is more than 30% below the 7-day average, triggers a notification if true
+2. A second ALERT for data freshness: triggers if no new rows have been added to CUSTOMER_REVIEWS in the last 24 hours (pipeline stalled)
+3. A third ALERT for AI quality: triggers if the average sentiment score in AI_OUTPUTS.REVIEWS_ENRICHED drops below -0.5 for a rolling 4-hour window (sudden spike in negative sentiment)
+4. For each alert: show the CREATE ALERT syntax, the CONDITION query, and how to set up an email notification using SYSTEM$SEND_EMAIL() (requires email integration setup — show the setup SQL too)
+5. Show how to view alert history using ALERT_HISTORY() table function
+6. Show how to pause, resume, and drop alerts
+7. Explain the difference between ALERTS (Snowflake native) and using external tools like PagerDuty or Slack webhooks via a webhook network rule (show the CREATE NETWORK RULE and CREATE SECRET syntax for a Slack webhook)`
+      },
+      {
+        label: "Task 4 — Concept: Snowflake Data Sharing & Marketplace",
+        title: "Ask CoCo to explain the Snowflake Data Cloud ecosystem",
+        type: "concept",
+        prompt: `Explain Snowflake's Data Sharing and Data Marketplace ecosystem. Cover:
+- Direct Data Sharing: how to share a database with another Snowflake account without copying data — what is a Share object and how do you create one?
+- Consumer experience: what does a data consumer see and how do they query shared data?
+- Data Clean Rooms: what are they and why do they matter for privacy-preserving data collaboration?
+- Snowflake Marketplace: how to discover and mount external datasets (free and paid), and give 3 examples of valuable free datasets available today
+- Listing data on the Marketplace: how would a company sell or share their data via Snowflake Marketplace?
+- Reader Accounts: what are they and when would you give a partner a Reader Account instead of full sharing?
+- Delta Sharing (open standard): how does Snowflake support this and when would you use it vs native sharing?
+- Cross-Cloud and Cross-Region sharing: does it work? What are the latency implications?
+
+End with a use case: how could my company share its sales analytics data with a strategic supplier partner using Snowflake Data Sharing, and what access controls should I put in place?`
+      }
+    ]
+  },
+
+  {
+    day: 21, title: "Week 3 Capstone — Full Cortex Analyst Application",
+    tasks: [
+      {
+        label: "Task 1 — Design a Complete Business Intelligence Application",
+        title: "Ask CoCo to architect a production BI app powered by Cortex Analyst",
+        type: "coco",
+        prompt: `Design a complete, production-ready Business Intelligence application for a retail company, fully powered by Snowflake Cortex Analyst. The application should allow non-technical business users to get instant insights from their data using natural language.
+
+Design the following components:
+1. DATA LAYER: What tables, views, and materialized views to build in Snowflake for the BI use case (sales, inventory, customers, marketing performance)
+2. SEMANTIC LAYER: How many semantic models (YAMLs) to create, what each covers, and how to handle relationships between them
+3. AI ENRICHMENT: Which Cortex AI functions (SENTIMENT, SUMMARIZE, CLASSIFY) to pre-compute and store to make the BI app faster and richer
+4. APPLICATION LAYER: Architecture of the Streamlit in Snowflake app: screens, navigation, components
+5. GOVERNANCE: RBAC setup, masking policies, audit logging for a multi-department rollout
+6. OPERATIONS: How to monitor, maintain, and update the semantic model over time
+7. ROLLOUT PLAN: A 4-week plan to deploy this to 50 business users
+
+Output as a detailed architecture document with sections, not bullet points.`
+      },
+      {
+        label: "Task 2 — Build the Streamlit App with Navigation",
+        title: "Ask CoCo to generate a multi-page Streamlit app with navigation",
+        type: "sql",
+        prompt: `Write a complete multi-page Streamlit in Snowflake application with the following pages. Write the full Python code for each page:
+
+PAGE 1 — Chat with Data (Cortex Analyst):
+- Full chat interface connecting to the sales semantic model
+- Shows results as tables + auto-charts
+- Displays the generated SQL in a collapsible expander
+- 'Clear Chat' button
+
+PAGE 2 — AI Sentiment Dashboard:
+- Pulls from AI_OUTPUTS.REVIEWS_ENRICHED
+- Shows overall sentiment gauge (average score)
+- Bar chart of sentiment by product category
+- Table of most negative reviews with their AI-generated summary
+- Date range filter using st.date_input()
+
+PAGE 3 — Customer Explorer:
+- Input box: enter a customer_id or name
+- Shows customer KPIs: total orders, LTV, segment, days since last order
+- Shows order history as a dataframe
+- AI button: 'Generate Customer Profile Summary' using COMPLETE()
+
+PAGE 4 — Data Health Monitor:
+- Table showing: row counts, last updated timestamp, and null % for key tables
+- Alert panel: any ALERT_HISTORY entries from the last 24 hours
+- Pipeline status: last run time of each Task
+
+Include a sidebar with page navigation and company branding.`
+      },
+      {
+        label: "Task 3 — Performance & Cost Optimization for the App",
+        title: "Ask CoCo to optimize the application for performance and cost",
+        type: "sql",
+        prompt: `Write SQL and Python code to optimize the COCO_LAB Cortex Analyst Streamlit application for production performance and cost efficiency:
+
+1. CACHING STRATEGY: Use Snowflake result cache + Streamlit's st.cache_data() to cache frequent queries (e.g., the sentiment dashboard data) for 1 hour. Show the Python caching pattern.
+
+2. WAREHOUSE OPTIMIZATION: Write SQL to create a dedicated XS warehouse for the Streamlit app (COCO_APP_WH) separate from the data pipeline warehouse, with auto-suspend 30 seconds and MAX_CLUSTER_COUNT=2 for burst capacity
+
+3. QUERY OPTIMIZATION: Review the V_SALES_SUMMARY view and rewrite it as a MATERIALIZED VIEW or a Dynamic Table with 1-hour refresh so it is pre-computed rather than queried live
+
+4. COST GUARDRAILS: Create a Resource Monitor on COCO_APP_WH that sends an alert at 50% of monthly credit budget and suspends at 100%
+
+5. TOKEN OPTIMIZATION: Rewrite the COMPLETE() call prompts in the app to be as concise as possible (shorter prompts = fewer tokens = lower cost). Show before/after prompt length comparison.
+
+6. LOAD TESTING QUERY: Write a simulation that sends 20 concurrent Cortex Analyst API requests and captures latency for each — useful for pre-launch performance testing`
+      },
+      {
+        label: "Task 4 — Documentation & Handover",
+        title: "Ask CoCo to generate complete technical documentation for your project",
+        type: "coco",
+        prompt: `Generate complete technical documentation for everything built in COCO_LAB over the past 3 weeks. Write it as a technical handover document for a new team member joining the project. Include:
+
+1. ARCHITECTURE OVERVIEW: What is in each schema (RAW, STAGING, ANALYTICS, AI_OUTPUTS), what each object does, and how data flows between them
+
+2. SEMANTIC MODEL GUIDE: How to update the YAML file, redeploy it, run the evaluation suite, and what to do if Cortex Analyst accuracy drops
+
+3. PIPELINE RUNBOOK: Step-by-step instructions for: what to do if the daily pipeline Task fails, how to reprocess failed rows, how to recover from an accidental data deletion using Time Travel
+
+4. ADDING NEW DATA SOURCES: Step-by-step guide for onboarding a new table into the Cortex Analyst semantic model, including all the steps from table creation to semantic model update to eval validation
+
+5. MONITORING CHECKLIST: Daily, weekly, and monthly checks to run to ensure the system is healthy
+
+6. COST BREAKDOWN: Estimated Snowflake credit consumption per day for each component (pipelines, AI functions, app queries, warehouse idle time)
+
+Format as a proper technical document with headers, numbered steps, and code snippets where relevant.`
+      }
+    ]
+  },
+
+  // ====== WEEK 4 ======
+  { week: 4, weekTitle: "Advanced, Production & Real-World Patterns", weekSub: "Days 22–28 · Master Cortex Agents, performance engineering, advanced ML, and capstone project delivery" },
+
+  {
+    day: 22, title: "Advanced AI Patterns — Chains, Loops & Orchestration",
+    tasks: [
+      {
+        label: "Task 1 — LLM Chains in Snowflake SQL",
+        title: "Ask CoCo to build multi-step LLM chains using COMPLETE in SQL",
+        type: "sql",
+        prompt: `Build complex LLM chains using SNOWFLAKE.CORTEX.COMPLETE() in COCO_LAB where the output of one COMPLETE call becomes the input to the next. Write SQL demonstrating:
+
+CHAIN 1 — Review Response Generator (3 steps):
+Step 1: Classify the review sentiment and category using COMPLETE()
+Step 2: Based on the category output from Step 1, select a response template using CASE WHEN
+Step 3: Use COMPLETE() again to personalize the template for the specific review text
+Store all intermediate outputs and final response in AI_OUTPUTS.REVIEW_RESPONSES
+
+CHAIN 2 — Product Description Optimizer (2 steps):
+Step 1: Use COMPLETE() to critique the existing product description: 'List 3 weaknesses in this product description for SEO: [description]'
+Step 2: Use the critique output from Step 1 as context in a second COMPLETE() call: 'Rewrite this product description fixing these issues: [critique]. Original: [description]'
+
+CHAIN 3 — Automated SQL Documentation (2 steps):
+Step 1: Pass a complex SQL query to COMPLETE() and ask it to explain what the query does in plain English
+Step 2: Pass the explanation to COMPLETE() and ask it to generate a one-line function name and a docstring for a stored procedure that wraps this logic
+
+Write all chains as multi-CTE SQL queries where each CTE represents one step in the chain.`
+      },
+      {
+        label: "Task 2 — Dynamic Prompt Engineering",
+        title: "Ask CoCo to build a prompt template system in SQL",
+        type: "sql",
+        prompt: `Build a dynamic prompt template management system in COCO_LAB. This allows managing and versioning LLM prompts as data:
+
+1. Create a table COCO_LAB.RAW.PROMPT_LIBRARY with columns: prompt_id, prompt_name, prompt_version, system_prompt, user_prompt_template (with {variable} placeholders), model_name, temperature, max_tokens, use_case, created_at, is_active (boolean)
+2. Insert 5 prompt templates: product_description_generator, review_responder, ticket_classifier, churn_explanation_writer, sql_explainer
+3. Write a stored procedure RENDER_AND_EXECUTE_PROMPT(prompt_name VARCHAR, variable_values VARIANT) that: fetches the active prompt by name, substitutes all {variable} placeholders with values from the VARIANT parameter, calls COMPLETE() with the rendered prompt, and returns the result
+4. Call the procedure for each of the 5 templates with sample data
+5. Write a prompt A/B test framework: create two versions of the review_responder prompt, run both on the same 10 reviews, and store both outputs for human comparison
+6. Show how to promote a prompt version from testing to active using an UPDATE on is_active`
+      },
+      {
+        label: "Task 3 — Snowflake Cortex with External Functions",
+        title: "Ask CoCo to explain and set up External Functions for Cortex extension",
+        type: "concept",
+        prompt: `Explain how to extend Snowflake Cortex AI with External Functions and External Network Access to call APIs outside Snowflake. Cover:
+1. What External Functions are and when you would use them instead of Cortex built-in functions (e.g., needing OpenAI GPT-4o specifically, calling a custom ML model hosted on AWS, integrating with a proprietary data enrichment API)
+2. The architecture: Snowflake → API Gateway → Lambda/Cloud Function → External API → response back to Snowflake
+3. The SQL to set up: CREATE EXTERNAL FUNCTION with the endpoint URL, headers, and auth config
+4. External Network Access (the newer approach): CREATE NETWORK RULE, CREATE SECRET, CREATE EXTERNAL ACCESS INTEGRATION — how they work together
+5. A concrete example: calling the OpenAI API directly from Snowflake using a Snowpark Python UDF with External Access, passing text and getting a completion back
+6. Security considerations: how to store API keys as Snowflake Secrets, not hardcoded
+7. Cost comparison: when does it make sense to use an external API (paying per token to OpenAI) vs Snowflake Cortex (paying per Snowflake token)?
+
+Show complete SQL setup code with security best practices.`
+      },
+      {
+        label: "Task 4 — Snowflake Cortex for Code Generation",
+        title: "Ask CoCo to use Cortex to generate and validate SQL code automatically",
+        type: "sql",
+        prompt: `Build a SQL code generation and validation assistant in COCO_LAB powered by Cortex COMPLETE. Write SQL that:
+1. Creates a table COCO_LAB.RAW.SQL_GENERATION_REQUESTS with: request_id, natural_language_request, target_schema, generated_sql, validation_status, error_message, execution_time_ms, requested_at
+2. Writes a stored procedure GENERATE_AND_VALIDATE_SQL(nl_request VARCHAR, target_schema VARCHAR) that:
+   - Calls COMPLETE() with a system prompt: 'You are a Snowflake SQL expert. Generate valid Snowflake SQL for the following request. Return ONLY the SQL, no explanation, no markdown code blocks.' and the user's natural language request plus the schema context
+   - Attempts to validate the generated SQL using SYSTEM$QUERY_VALIDATE() or by running it with LIMIT 0
+   - If validation passes: stores the SQL with status 'VALID' and returns it
+   - If validation fails: calls COMPLETE() again with the error message to get a corrected version, tries once more
+   - Logs everything to SQL_GENERATION_REQUESTS
+3. Tests the procedure with 5 natural language requests of varying complexity
+4. Show the success rate and average attempts needed for valid SQL`
+      }
+    ]
+  },
+
+  {
+    day: 23, title: "Snowflake Performance Engineering & Query Tuning",
+    tasks: [
+      {
+        label: "Task 1 — Deep Query Profiling",
+        title: "Ask CoCo to write comprehensive query profiling SQL",
+        type: "sql",
+        prompt: `Write a comprehensive query performance profiling toolkit in COCO_LAB using Snowflake's ACCOUNT_USAGE and INFORMATION_SCHEMA views. Include:
+
+1. TOP SLOW QUERIES: Query QUERY_HISTORY in the last 7 days, find top 10 slowest queries by EXECUTION_TIME, show: query_text (truncated), execution_time_seconds, warehouse_name, user_name, rows_returned, bytes_scanned, partitions_scanned, partitions_total, cache_hit_pct
+2. INEFFICIENT QUERIES (full table scans): Find queries where partitions_scanned / partitions_total > 0.8 (scanning more than 80% of micro-partitions) — these need clustering or better filtering
+3. EXPENSIVE WAREHOUSE USAGE: Aggregate credits used by user and warehouse over last 30 days from WAREHOUSE_METERING_HISTORY
+4. CACHE MISS ANALYSIS: Find queries that ran recently where a previous identical query ran within the last hour — these should have hit the result cache but did not (suggests result cache was invalidated)
+5. CONCURRENT QUERY CONTENTION: Find time windows in the last 7 days where more than 5 queries were queued simultaneously on COCO_WH (suggest multi-cluster scaling)
+6. DATA SPILL DETECTION: Find queries with bytes_spilled_to_local_storage > 0 or bytes_spilled_to_remote_storage > 0 — these need a larger warehouse or query rewrite
+7. QUERY TREND REPORT: Daily query volume, average execution time, p95 execution time for the last 30 days`
+      },
+      {
+        label: "Task 2 — Clustering & Micro-Partition Optimization",
+        title: "Ask CoCo to optimize your tables with clustering keys",
+        type: "sql",
+        prompt: `Write SQL to analyze and optimize the physical layout of COCO_LAB tables using clustering. Include:
+
+1. CLUSTERING ANALYSIS: For the ORDERS table, run SYSTEM$CLUSTERING_INFORMATION() and interpret the output — what do average_depth and average_overlaps tell us?
+2. CLUSTERING DECISION: Write a query using INFORMATION_SCHEMA.TABLE_STORAGE_METRICS to check table size, row count, and clustering ratio for all tables in COCO_LAB.RAW
+3. APPLY CLUSTERING: Add clustering key to ORDERS on (DATE_TRUNC('month', order_date), customer_id) — explain why these two columns together make sense for the common query patterns
+4. ADD CLUSTERING to ORDER_ITEMS on (order_id) since it is frequently joined to ORDERS
+5. MONITOR RECLUSTER PROGRESS: Write the query to check automatic clustering progress using AUTOMATIC_CLUSTERING_HISTORY
+6. SEARCH OPTIMIZATION: Enable Search Optimization on CUSTOMERS.email column for fast point lookups: ALTER TABLE CUSTOMERS ADD SEARCH OPTIMIZATION ON EQUALITY(email)
+7. RESULT COMPARISON: Write the same query against ORDERS before and after clustering, using EXPLAIN to show partition pruning improvement
+
+Add comments explaining when clustering is worth the automatic maintenance cost.`
+      },
+      {
+        label: "Task 3 — Cost Attribution & Chargeback",
+        title: "Ask CoCo to build a cost attribution dashboard",
+        type: "sql",
+        prompt: `Build a complete cost attribution and chargeback reporting system in COCO_LAB using Snowflake's cost management views. Write SQL that:
+1. Creates a daily cost summary table COCO_LAB.ANALYTICS.DAILY_COST_SUMMARY aggregating from: WAREHOUSE_METERING_HISTORY, QUERY_HISTORY, CORTEX_FUNCTIONS_USAGE (if available), STORAGE_USAGE, AUTOMATIC_CLUSTERING_HISTORY
+2. Attributes warehouse credits to user, role, and query_tag — explain how to use ALTER SESSION SET QUERY_TAG to label queries for cost attribution
+3. Builds a COST_BY_TEAM view: maps roles to teams (DATA_ENGINEER_ROLE → Data Engineering, DATA_ANALYST_ROLE → Analytics, etc.) and shows weekly spend per team
+4. Creates a MONTHLY_BUDGET_TRACKER: compares actual spend to a budget table (create a BUDGETS table with team, month, budget_credits) and shows % of budget used and projected month-end spend
+5. Builds an alert: if any team's weekly spend is 150% of their weekly average, flag it in an OVERSPEND_ALERTS table
+6. Generates a CFO-ready monthly cost report query: total spend, cost per query, cost per TB stored, cost per 1000 AI function calls, and month-over-month change`
+      },
+      {
+        label: "Task 4 — Concept: Snowflake Architecture Deep Dive",
+        title: "Ask CoCo for an advanced explanation of Snowflake's internal architecture",
+        type: "concept",
+        prompt: `Give me an advanced, in-depth explanation of Snowflake's internal architecture — go beyond the basics I learned in Week 1. Cover:
+- Micro-partitions: exact size (50-500 MB compressed), columnar format, immutability — why they can never be updated in place
+- How DML (INSERT, UPDATE, DELETE, MERGE) actually works on immutable micro-partitions (copy-on-write, generating new partitions)
+- The metadata store in the Cloud Services layer: what it tracks, why it is so fast (no I/O), and why it costs compute even when no warehouse is running
+- Virtual Warehouse architecture: how the worker nodes, local SSD cache, and remote S3/GCS/Azure storage interact during a query
+- How query compilation works: the DAG of operators, pruning, predicate pushdown, projection pushdown
+- Spilling: what triggers spilling to local disk vs remote storage and why it is so catastrophically slow
+- Multi-cluster warehouses: how load balancing between clusters works, what triggers scaling out vs up
+- The Snowflake native application model (Snowpark Container Services, Native Apps) — what it enables for building AI applications on Snowflake
+
+Explain everything at the level of a senior data engineer preparing for a Snowflake SnowPro Advanced certification.`
+      }
+    ]
+  },
+
+  {
+    day: 24, title: "Snowflake Native Apps & Container Services",
+    tasks: [
+      {
+        label: "Task 1 — Snowpark Container Services Overview",
+        title: "Ask CoCo to explain SPCS and when to use it for AI workloads",
+        type: "concept",
+        prompt: `Explain Snowpark Container Services (SPCS) and how it enables running containerized AI workloads inside Snowflake. Cover:
+1. What SPCS is: running Docker containers natively inside Snowflake's infrastructure, without data leaving Snowflake
+2. Key components: IMAGE REPOSITORY (like a private Docker registry inside Snowflake), COMPUTE POOLS (GPU or CPU node pools), SERVICES (long-running container apps), JOB SERVICES (batch container runs)
+3. When to use SPCS instead of Cortex: when you need a custom ML model (BERT, custom fine-tuned LLM), a non-SQL AI framework (PyTorch inference server), or a third-party tool
+4. GPU Compute Pools: what GPU instance types are available, how to request one, and the cost premium vs CPU instances
+5. Networking: how SPCS services can expose HTTP endpoints that Snowflake functions and Streamlit apps call
+6. A concrete use case: deploying a custom fine-tuned sentiment model as a SPCS service, then calling it from SQL via an External Function or UDF
+7. SPCS vs Cortex: when each is appropriate — give a decision guide
+
+Walk through the high-level steps (no code needed, just the conceptual flow) to deploy a custom AI model as a SPCS service.`
+      },
+      {
+        label: "Task 2 — Snowflake Native Applications",
+        title: "Ask CoCo to explain the Native App framework and how AI is monetized on Snowflake",
+        type: "concept",
+        prompt: `Explain the Snowflake Native Application Framework and how it relates to AI and Cortex. Cover:
+1. What a Native App is: a Snowflake application that runs inside a customer's Snowflake account, built by a provider, installed by a consumer — without the provider seeing the consumer's data
+2. How AI-powered Native Apps work: a vendor builds a Cortex Analyst or ML-powered app, packages it as a Native App, and customers install it into their own Snowflake account
+3. The Application Package and Application object hierarchy
+4. How monetization works: listing a Native App on the Snowflake Marketplace (free, paid, usage-based pricing)
+5. Versioning and upgrades: how a provider pushes new versions without breaking existing installations
+6. Permissions: what a Native App can and cannot access in the consumer's account (the REQUEST PERMISSION model)
+7. Real-world examples: what kinds of AI products are being sold as Native Apps on the Snowflake Marketplace today?
+8. Should our company build a Native App vs a Streamlit in Snowflake app? What is the decision criteria?
+
+Include a concrete scenario: our company has built a churn prediction model using Cortex ML — how would we package and sell it as a Native App to other companies?`
+      },
+      {
+        label: "Task 3 — Document AI with Cortex — Processing PDFs & Documents",
+        title: "Ask CoCo to build a document processing pipeline using Cortex",
+        type: "sql",
+        prompt: `Build a document AI pipeline in COCO_LAB that processes uploaded documents using Snowflake Cortex. Write SQL that:
+1. Creates an internal stage COCO_LAB.RAW.DOCUMENTS_STAGE with directory table enabled for tracking uploaded files
+2. Creates a table COCO_LAB.RAW.DOCUMENT_REGISTRY with: doc_id, file_name, file_path, file_type (PDF/DOCX/TXT), uploaded_at, processed (boolean), extracted_text, doc_summary, doc_category, key_entities (VARIANT)
+3. Uses Snowflake's PARSE_DOCUMENT() function (or the equivalent document extraction approach in Cortex) to extract text content from documents staged in the stage
+4. Runs SNOWFLAKE.CORTEX.SUMMARIZE() on the extracted text to create document summaries
+5. Runs AI_CLASSIFY() to categorize each document as: Contract / Invoice / Report / Policy / Other
+6. Runs AI_EXTRACT() to pull: company names, dates, monetary amounts, and person names from each document as structured VARIANT output
+7. Creates a search-ready view joining document metadata with extracted content, usable as a basis for a Cortex Search service
+8. Writes a Task that automatically processes new documents whenever they are uploaded to the stage`
+      },
+      {
+        label: "Task 4 — Concept: AI Agent Design Patterns",
+        title: "Ask CoCo to explain agentic AI design patterns applicable in Snowflake",
+        type: "concept",
+        prompt: `Explain AI Agent design patterns and how they apply to Snowflake Cortex Agents. Cover:
+1. What makes an AI system 'agentic': ability to plan, use tools, and take multi-step actions
+2. The ReAct pattern (Reason + Act): how agents alternate between reasoning and tool calls
+3. Tool use patterns: when an agent should call Cortex Analyst (structured query), Cortex Search (retrieval), COMPLETE (generation), or an External Function (custom API)
+4. Orchestration vs routing: what is the difference between a router agent (picks one tool and returns) vs an orchestrator agent (can call multiple tools in sequence and combine results)?
+5. Memory in agents: within-session context (conversation history) vs long-term memory (stored in a Snowflake table)
+6. Safety and guardrails: how to prevent an agent from generating SQL that modifies data (DROP/DELETE/UPDATE) when it should only read
+7. Evaluation of agents: how do you measure whether an agent is performing well when the task is open-ended?
+8. Snowflake Cortex Agents current capabilities vs what is coming: what is in GA vs Preview vs roadmap?
+
+End with a practical example: design an agentic customer support assistant that can: look up order status (Cortex Analyst on orders table), search the knowledge base for policies (Cortex Search), and generate a personalized response (COMPLETE) — all in one conversation turn.`
+      }
+    ]
+  },
+
+  {
+    day: 25, title: "Snowflake for Data Science — Feature Engineering & MLOps",
+    tasks: [
+      {
+        label: "Task 1 — Feature Engineering with SQL + Cortex",
+        title: "Ask CoCo to build a complete feature engineering pipeline",
+        type: "sql",
+        prompt: `Build a comprehensive feature engineering pipeline in COCO_LAB that combines traditional SQL features with AI-generated features using Cortex. Write SQL that creates a MASTER_FEATURE_STORE table in COCO_LAB.ANALYTICS:
+
+TRADITIONAL FEATURES (from SQL):
+- recency: days since last order
+- frequency: order count in last 90 days
+- monetary: total spend in last 90 days (RFM scores)
+- aov: average order value
+- pct_cancelled: percentage of cancelled orders
+- product_category_diversity: count of distinct categories ordered
+- days_between_first_and_last_order: order lifespan
+- weekend_buyer: boolean, does customer predominantly order on weekends
+
+AI-GENERATED FEATURES (from Cortex, using customer review text if available):
+- review_sentiment_avg: average sentiment score of their reviews
+- review_sentiment_trend: is sentiment improving or declining (use CORR between review_number and sentiment)
+- customer_voice_summary: AI_AGG summary of their reviews (what type of customer are they?)
+- support_ticket_urgency: average urgency level of their support tickets from AI_CLASSIFY()
+
+Store all features in COCO_LAB.ANALYTICS.MASTER_FEATURE_STORE with customer_id as key and feature_generated_at timestamp. Create as a Dynamic Table with 24-hour refresh.`
+      },
+      {
+        label: "Task 2 — Model Registry & MLOps",
+        title: "Ask CoCo to set up a complete MLOps workflow using Snowflake Model Registry",
+        type: "sql",
+        prompt: `Write a complete Python script (as a Snowflake Notebook or Snowpark stored procedure) demonstrating the Snowflake Model Registry for MLOps. Cover:
+
+1. Train a simple sklearn model (LogisticRegression for churn prediction) on the MASTER_FEATURE_STORE data using Snowpark ML
+2. Log the model to the Snowflake Model Registry: registry.log_model() with model_name, version, metrics (accuracy, AUC), and tags (env=development, use_case=churn)
+3. Retrieve the model from the registry and run batch predictions on new customers
+4. Show how to promote a model version from 'development' to 'production' using registry tags or aliases
+5. Show how to run A/B comparison: deploy model v1 and v2 side by side, both scoring the same customers, compare output distribution
+6. Set up model monitoring: create a table that tracks prediction drift over time (compare score distribution today vs 30 days ago using KS-test or simple decile comparison)
+7. Show how to list all registered models, view model metadata, and delete old versions
+
+Include complete Python code with Snowpark session setup.`
+      },
+      {
+        label: "Task 3 — dbt Integration with Snowflake & Cortex",
+        title: "Ask CoCo to explain and demonstrate dbt + Snowflake + Cortex patterns",
+        type: "concept",
+        prompt: `Explain how to use dbt (data build tool) with Snowflake and Cortex AI functions. Cover:
+1. dbt basics: what are models, sources, tests, and macros — how do they map to Snowflake SQL?
+2. How to call Cortex AI functions in a dbt model: write a sample dbt model file (.sql) that uses SNOWFLAKE.CORTEX.SENTIMENT() on a column
+3. dbt macros for Cortex: write a reusable dbt macro that wraps COMPLETE() with configurable model and temperature
+4. Testing AI outputs in dbt: how to write a dbt test that validates sentiment scores are between -1 and 1, and another that checks classification outputs are within an allowed set
+5. dbt snapshots: how to use dbt snapshots (SCD Type 2) to track when a customer's AI-generated churn score changes over time
+6. dbt Semantic Layer: how does dbt's semantic layer compare to Snowflake Cortex Analyst's semantic model? Can they be used together?
+7. Running dbt in Snowflake: can you run dbt transformations entirely inside Snowflake without an external orchestrator?
+8. The ideal stack: dbt (transformation) + Cortex AI (enrichment) + Cortex Analyst (BI layer) — how they fit together
+
+Give a concrete project structure showing the dbt project folder layout for a Snowflake + Cortex project.`
+      },
+      {
+        label: "Task 4 — Concept: AI Ethics & Responsible AI in Snowflake",
+        title: "Ask CoCo to explain ethical considerations for enterprise AI pipelines",
+        type: "concept",
+        prompt: `Explain responsible AI and ethical considerations that enterprise data teams must address when building AI pipelines on Snowflake Cortex. Cover:
+1. Bias in ML models: how the CHURN_MODEL we built could be biased against certain demographic groups, and how to detect and mitigate this using SQL analysis
+2. Explainability: for the churn prediction, how do we explain to a customer why they were flagged? (Snowflake Cortex ML's feature importance output, CONTRIBUTION_EXPLORER)
+3. Fairness metrics: what SQL queries can I write to check if model predictions are equally accurate across demographic groups (e.g., by country)?
+4. Data minimization: the principle that AI models should only use the minimum data needed — which features in our churn model should we remove for ethical reasons?
+5. Model cards: what is a model card and what information should we document for our churn model?
+6. Human-in-the-loop: for high-stakes decisions (targeting customers for cancellation, denying service) why should we always have a human review AI output before action?
+7. Snowflake's commitments: what does Snowflake promise about AI safety, data privacy, and responsible AI in Cortex?
+8. Regulatory landscape: GDPR Article 22 (automated decision-making), EU AI Act — how do they affect our AI pipelines?
+
+End with a practical AI governance checklist for launching any AI-powered feature in our company.`
+      }
+    ]
+  },
+
+  {
+    day: 26, title: "Advanced CoCo — Complex Queries, Debugging & Edge Cases",
+    tasks: [
+      {
+        label: "Task 1 — Complex Multi-Step Analytical Queries",
+        title: "Ask CoCo to handle your most complex analytical questions",
+        type: "coco",
+        prompt: `I want to test Cortex Analyst (CoCo) with the most complex business questions my data can support. For each of the following questions, show me the SQL you would generate and explain the approach:
+
+1. COHORT ANALYSIS: 'For each monthly customer acquisition cohort from Jan 2023 to Dec 2023, what is their 1-month, 3-month, and 6-month revenue retention rate?'
+
+2. PRODUCT AFFINITY: 'Which pairs of products are most frequently purchased together in the same order, and what is the lift score for each pair compared to random chance?'
+
+3. CUSTOMER LIFETIME VALUE PREDICTION: 'Based on order patterns in the first 30 days, predict which new customers (signed up in last 60 days) will have high LTV (top 20%) in 12 months, using historical data to define the pattern'
+
+4. REVENUE AT RISK: 'Identify orders that were placed but are at risk of cancellation based on historical patterns — which characteristics (product category, country, discount level, time of day) are most associated with cancellations?'
+
+5. MULTI-TOUCH ATTRIBUTION: 'If we had channel data for each customer journey, how would you set up a SQL-based last-touch, first-touch, and linear attribution model?'
+
+For each: write the SQL, explain the approach, and flag any limitations in the data that would affect accuracy.`
+      },
+      {
+        label: "Task 2 — Debugging Cortex Analyst Failures",
+        title: "Ask CoCo to help debug common semantic model problems",
+        type: "coco",
+        prompt: `Help me understand how to debug Cortex Analyst when it gives wrong answers or refuses to answer. Walk me through each of these failure scenarios:
+
+SCENARIO 1: The question 'What was revenue last quarter?' returns revenue for the wrong quarter — it uses the current quarter instead of the previous one. What could be wrong in the semantic model and how do I fix it?
+
+SCENARIO 2: The question 'Show me top 10 customers by revenue' returns only 5 customers. The SQL generated uses LIMIT 5 instead of 10. What might cause this and how do I use custom_instructions to fix it?
+
+SCENARIO 3: Cortex Analyst responds with 'I cannot answer this question' for 'What is our customer churn rate?' — the data exists but it needs a calculation that spans multiple tables. How do I handle this?
+
+SCENARIO 4: A question about 'Gold customers' returns results for all customers because the semantic model does not know 'Gold' refers to the customer_segment='Gold' filter. How do I fix this with filters or custom_instructions?
+
+SCENARIO 5: The agent is producing slightly different SQL every time for the same question (non-deterministic). How do I stabilize it using verified_queries and custom_instructions?
+
+For each: give the root cause and the exact YAML change or prompt change that fixes it.`
+      },
+      {
+        label: "Task 3 — Stress Testing the Semantic Model",
+        title: "Ask CoCo to run a comprehensive stress test on your semantic model accuracy",
+        type: "coco",
+        prompt: `Run a comprehensive stress test of my Cortex Analyst semantic model by asking 20 progressively harder questions. For each question:
+- Write the SQL you would generate
+- Give the expected result format (single number / table / time series)
+- Rate the question difficulty: Easy / Medium / Hard / Expert
+
+The 20 questions should span:
+- 4 Easy: simple aggregations (total revenue, customer count, top product)
+- 4 Medium: GROUP BY with time filtering, percentage calculations
+- 4 Hard: window functions, cohort analysis, multi-table joins
+- 4 Expert: statistical calculations (correlation, standard deviation, percentile), multi-step logic
+- 4 Ambiguous: questions with undefined terms that require CoCo to make assumptions (e.g. 'recent', 'significant', 'best')
+
+For the Ambiguous category: also explain what assumption CoCo makes, whether it surfaces that assumption to the user, and how I should configure the semantic model to handle these better.`
+      },
+      {
+        label: "Task 4 — Concept: Future of Snowflake & Cortex",
+        title: "Ask CoCo to give a forward-looking view of where Snowflake AI is heading",
+        type: "concept",
+        prompt: `Give me a forward-looking perspective on where Snowflake Cortex and the broader Snowflake AI platform is heading. Cover:
+1. What features are currently in Public Preview that are likely to go GA soon? (Cortex Agents, AISQL functions, Semantic Views, Cortex Analyst routing)
+2. The shift from 'Snowflake as a data warehouse' to 'Snowflake as an AI Data Cloud' — what does this mean practically?
+3. Competition: how does Snowflake Cortex compare to Databricks AI (Unity Catalog + DBRX), Google BigQuery ML, and Azure Synapse Analytics AI features?
+4. The open vs closed debate: Snowflake supports open models (Llama, Mistral) and proprietary APIs (Anthropic Claude in Cortex) — what is their strategy?
+5. Snowflake's acquisition strategy: what companies has Snowflake acquired related to AI and what capabilities did each add?
+6. The SnowPro certification landscape: what certifications should a data engineer pursuing Snowflake mastery aim for, in what order?
+7. What skills will be most valuable in a 'Snowflake + AI' world in the next 2-3 years?
+8. What should I learn after completing this 28-day plan to become an expert-level Snowflake Cortex practitioner?`
+      }
+    ]
+  },
+
+  {
+    day: 27, title: "Real-World Industry Use Cases with Cortex",
+    tasks: [
+      {
+        label: "Task 1 — Retail & E-commerce AI Use Case",
+        title: "Ask CoCo to build a complete retail AI solution",
+        type: "sql",
+        prompt: `Build a complete retail intelligence solution in COCO_LAB using Snowflake Cortex. Simulate a full retail analytics use case by writing SQL that:
+
+1. PERSONALIZATION ENGINE: For each customer, use COMPLETE() to generate a personalized 'What to buy next' recommendation based on their purchase history, category preferences, and average order value. Store in AI_OUTPUTS.PERSONALIZED_RECOMMENDATIONS
+
+2. DYNAMIC PRICING SIGNALS: Use ANOMALY_DETECTION on product daily revenue to identify which products are selling unusually fast (demand spike) vs unusually slow (demand drop). Flag them for pricing team review.
+
+3. INVENTORY INTELLIGENCE: Use FORECAST to predict next 14-day demand for the top 10 products. Compare forecast against a simulated INVENTORY table (create with current stock levels). Flag products that will stock out before replenishment.
+
+4. CUSTOMER WIN-BACK: Identify customers inactive for 60-180 days, use COMPLETE() to generate a personalized win-back email subject line and opening paragraph for each, referencing their last purchased product category.
+
+5. MERCHANDISING INSIGHTS: Use AI_AGG on all reviews grouped by category to generate a category-level 'Voice of Customer' summary that merchandising teams can read in 30 seconds.
+
+Combine all outputs into a COCO_LAB.ANALYTICS.V_RETAIL_AI_INSIGHTS view.`
+      },
+      {
+        label: "Task 2 — Financial Services AI Use Case",
+        title: "Ask CoCo to build a financial services AI compliance and risk use case",
+        type: "sql",
+        prompt: `Build a financial services AI solution in COCO_LAB demonstrating how Cortex can be used in a regulated industry. Write SQL that:
+
+1. TRANSACTION ANOMALY DETECTION: Create a simulated TRANSACTIONS table (transaction_id, account_id, amount, merchant_category, country, timestamp, is_flagged). Run ANOMALY_DETECTION on daily transaction amounts per account to flag unusual spikes.
+
+2. DOCUMENT COMPLIANCE PROCESSING: Create a COMPLIANCE_DOCUMENTS table with regulatory text (simulate excerpts from AML policies, KYC procedures). Use SUMMARIZE to create 2-sentence summaries and AI_EXTRACT to pull: effective_date, regulation_name, key_obligations as structured fields.
+
+3. CUSTOMER RISK SCORING: Write a SQL ML CLASSIFICATION model that predicts credit default risk from account features. Use CONTRIBUTION_EXPLORER to explain which features drove each prediction.
+
+4. AUDIT TRAIL: Show how to use COCO_LAB with ACCESS_HISTORY from SNOWFLAKE.ACCOUNT_USAGE to prove to auditors that all AI function calls were logged, who ran them, and what data they touched.
+
+5. PII PROTECTION: Apply AI_REDACT to all customer-facing AI outputs (recommendation emails, risk summaries) before they leave Snowflake, ensuring no raw PII appears in any Cortex function output.
+
+6. A note at the end: in SQL comments, explain what additional controls would be needed before using Cortex in a real FCA/SEC regulated environment.`
+      },
+      {
+        label: "Task 3 — Healthcare AI Use Case (Synthetic Data Only)",
+        title: "Ask CoCo to build a healthcare analytics use case with synthetic data",
+        type: "sql",
+        prompt: `Build a healthcare analytics use case using ENTIRELY SYNTHETIC data in COCO_LAB (no real patient data). Write SQL that:
+
+1. Creates synthetic data: PATIENTS table (patient_id, age_group, region, insurance_type — NO real names or identifiers), APPOINTMENTS table (appointment_id, patient_id, appointment_type, scheduled_date, attended boolean, no_show_reason_text), CLINICAL_NOTES table (note_id, patient_id, note_text — synthetic text only, no real medical info)
+
+2. NO-SHOW PREDICTION: Build a Cortex ML CLASSIFICATION model predicting which patients are likely to miss appointments based on: age_group, insurance_type, appointment_type, day_of_week, days_until_appointment, historical_no_show_rate. Score all upcoming appointments.
+
+3. APPOINTMENT NOTE SUMMARIZATION: Run SUMMARIZE on synthetic clinical notes to demonstrate how healthcare organizations could build a note-summarization tool. Emphasize in comments that real deployment would require HIPAA BAA with Snowflake and additional controls.
+
+4. CAPACITY FORECASTING: Use FORECAST on appointment volume per department to predict next 30 days of demand, helping with staff scheduling.
+
+5. Add a comprehensive comment block at the top explaining: why synthetic data is used, what real-world controls (BAA, de-identification, access logging) would be required before using Cortex on real patient data, and which regulatory frameworks (HIPAA, GDPR in EU) apply.`
+      },
+      {
+        label: "Task 4 — Building Your Portfolio: What to Showcase",
+        title: "Ask CoCo to help you build a professional Snowflake AI portfolio",
+        type: "concept",
+        prompt: `Help me build a professional portfolio to showcase my 28-day Snowflake Cortex Analyst expertise. Cover:
+
+1. GITHUB REPOSITORY STRUCTURE: What should my Snowflake AI portfolio repo look like? Give me the folder structure, README outline, and what files to include (SQL scripts, YAML semantic models, Python notebooks, Streamlit app code, documentation)
+
+2. DEMO DATASET RECOMMENDATION: What publicly available dataset (beyond my fake sales data) should I use as the basis for a compelling portfolio project? Suggest 3 options with reasoning (TPC-DS benchmark, NYC Taxi data, Kaggle datasets, Snowflake Sample Data).
+
+3. THE KILLER DEMO: Design a 5-minute portfolio demonstration that would impress a data engineering hiring manager. What do I show, in what order, and what talking points highlight the most impressive aspects of Snowflake Cortex Analyst?
+
+4. LINKEDIN CONTENT: Write 3 LinkedIn post drafts (150 words each) announcing my CoCo badge achievement, each with a different angle: technical depth, business impact, and personal learning journey.
+
+5. INTERVIEW PREPARATION: Give me 10 common interview questions about Snowflake Cortex Analyst and semantic models, with ideal answers that demonstrate hands-on experience.
+
+6. NEXT CERTIFICATIONS: What SnowPro certifications should I pursue next and in what order? Core → Advanced Data Engineer → Advanced Architect — what does each cover?`
+      }
+    ]
+  },
+
+  {
+    day: 28, title: "Final Capstone — Full AI Data Platform Delivery",
+    tasks: [
+      {
+        label: "Task 1 — Deploy the Complete Platform",
+        title: "Ask CoCo to generate the master deployment script for everything you have built",
+        type: "sql",
+        prompt: `Generate the master deployment script for the complete COCO_LAB AI Data Platform built over 28 days. This should be a single, runnable SQL script (with clear section headers) that an engineer could run on a fresh Snowflake account to reproduce the entire platform from scratch.
+
+Structure the script in this order:
+SECTION 1 — INFRASTRUCTURE: Database, schemas, warehouses, roles, user grants
+SECTION 2 — RAW TABLES: All tables in COCO_LAB.RAW with sample data inserts
+SECTION 3 — STAGING OBJECTS: Stages, file formats, streams on key tables
+SECTION 4 — TRANSFORMATION LAYER: All views in ANALYTICS schema, Dynamic Tables for feature store
+SECTION 5 — AI OUTPUTS: All tables in AI_OUTPUTS schema for storing Cortex results
+SECTION 6 — AI PROCESSING: All stored procedures that run Cortex functions
+SECTION 7 — PIPELINE ORCHESTRATION: All Tasks and their schedule, parent-child relationships
+SECTION 8 — GOVERNANCE: Masking policies, row access policies, tags, applied to correct columns
+SECTION 9 — CORTEX SEARCH: Search service creation on knowledge base
+SECTION 10 — ALERTS & MONITORING: All alert objects and resource monitors
+SECTION 11 — VALIDATION: Final validation queries confirming all 10 sections deployed correctly
+
+Add a header comment block with: platform name, version 1.0, deployment date, and contact.`
+      },
+      {
+        label: "Task 2 — Write the Executive Summary",
+        title: "Ask CoCo to generate a business-facing summary of the platform you built",
+        type: "coco",
+        prompt: `I have just completed building a full AI Data Platform on Snowflake Cortex over 28 days. Help me write a 1-page executive summary explaining what was built and the business value it delivers. The document should:
+
+1. OVERVIEW (2 sentences): What the platform is and who it is for
+2. KEY CAPABILITIES DELIVERED: List 8 capabilities with one sentence each:
+   - Natural language analytics (Cortex Analyst)
+   - Automated sentiment monitoring
+   - AI-powered customer reviews processing
+   - Multilingual product content
+   - Predictive churn scoring
+   - Revenue forecasting
+   - Document intelligence
+   - Privacy-preserving AI (AI_REDACT + masking policies)
+3. ESTIMATED BUSINESS IMPACT: For each capability, give a realistic estimated time/cost saving (e.g., 'Eliminates 20 hours/week of manual SQL requests from the analytics team')
+4. TECHNICAL HIGHLIGHTS: 3 things that make this platform technically impressive
+5. NEXT STEPS: 3 recommended enhancements for Phase 2
+
+Write in professional business language, no technical jargon, suitable for a CTO or VP of Data to read.`
+      },
+      {
+        label: "Task 3 — CoCo Conversation: Platform Retrospective",
+        title: "Have a structured retrospective conversation with CoCo about what you have built",
+        type: "coco",
+        prompt: `I have just completed a 28-day Snowflake Cortex Analyst learning journey building the COCO_LAB platform. I want to have a structured retrospective with you to assess my learning.
+
+Please ask me 10 questions that test my understanding of what I built. After each question, wait for my answer (I will tell you to continue), then give me:
+- A rating out of 10 for my answer
+- What I got right
+- What I missed or could have said better
+- One follow-up insight that deepens understanding
+
+The questions should cover:
+- 2 questions on Snowflake architecture fundamentals
+- 2 questions on Cortex AI functions (SENTIMENT, SUMMARIZE, COMPLETE, AI_EXTRACT)
+- 2 questions on Cortex Analyst semantic models
+- 2 questions on pipeline design and governance
+- 2 questions on production deployment and cost management
+
+Start with question 1 now. I will respond, then say 'Next question' when I am ready to continue.`
+      },
+      {
+        label: "Task 4 — Final: Generate Your CoCo Badge Submission Summary",
+        title: "Ask CoCo to generate a badge submission summary of all your 28 days",
+        type: "coco",
+        prompt: `I have completed 28 days of daily interaction with Cortex Analyst (CoCo) as part of the CoCo badge challenge. Please help me create a comprehensive summary of everything accomplished that I can submit as evidence of my engagement.
+
+Generate a structured summary covering:
+
+1. PLATFORM BUILT: List all Snowflake objects created (tables, views, procedures, tasks, streams, dynamic tables, search services, ML models, Streamlit apps, semantic models)
+
+2. CORTEX FEATURES MASTERED: For each Cortex feature used, give the feature name and one example of how it was applied in COCO_LAB
+
+3. SKILLS PROGRESSION: Describe my journey from Day 1 (basic SQL) to Day 28 (full AI pipeline) in 3 paragraphs
+
+4. MOST COMPLEX ACHIEVEMENT: Describe the most technically complex thing built during the 28 days (the end-to-end AI enrichment pipeline)
+
+5. BUSINESS VALUE DEMONSTRATED: 5 concrete examples where Cortex AI added measurable value to the simulated business data
+
+6. KNOWLEDGE GAPS IDENTIFIED: 3 areas where I should continue learning beyond this plan
+
+7. DAILY INTERACTION LOG: Generate a table showing Day | Topic | Cortex Feature Used | Key Prompt Run — for all 28 days
+
+This summary will be used to demonstrate engagement with CoCo for the badge requirement.`
+      }
+    ]
+  }
+];
+
+// Render
+const container = document.getElementById('planContainer');
+let dayCount = 0;
+
+const completedDays = new Set(JSON.parse(localStorage.getItem('coco_completed') || '[]'));
+
+function updateProgress() {
+  const total = 28;
+  const done = completedDays.size;
+  const pct = Math.round((done / total) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('completedCount').textContent = `${done} / ${total} days done`;
+}
+
+function saveProgress() {
+  localStorage.setItem('coco_completed', JSON.stringify([...completedDays]));
+}
+
+const weekColors = ['var(--week1)', 'var(--week2)', 'var(--week3)', 'var(--week4)'];
+const weekBgs = [
+  'rgba(0,212,255,0.07)',
+  'rgba(123,97,255,0.07)',
+  'rgba(0,255,157,0.07)',
+  'rgba(255,107,107,0.07)'
+];
+
+plan.forEach(item => {
+  if (item.week) {
+    const wDiv = document.createElement('div');
+    wDiv.className = `week-header w${item.week}`;
+    wDiv.innerHTML = `
+      <div class="week-line"></div>
+      <div class="week-tag">Week ${item.week}</div>
+      <div class="week-title">${item.weekTitle}</div>
+      <div class="week-line"></div>
+    `;
+    container.appendChild(wDiv);
+    const wSub = document.createElement('p');
+    wSub.style.cssText = 'color:var(--muted);font-family:"DM Mono",monospace;font-size:12px;text-align:center;margin-bottom:24px;';
+    wSub.textContent = item.weekSub;
+    container.appendChild(wSub);
+    return;
+  }
+
+  dayCount++;
+  const d = item.day;
+  const isDone = completedDays.has(d);
+
+  const card = document.createElement('div');
+  card.className = 'day-card' + (isDone ? ' done' : '');
+  card.id = `day${d}`;
+
+  const weekNum = Math.ceil(d / 7);
+  const wColor = weekColors[weekNum - 1];
+
+  const header = document.createElement('div');
+  header.className = 'day-header';
+  header.innerHTML = `
+    <div class="day-num">DAY ${d}</div>
+    <div class="day-title">${item.title}</div>
+    <div class="day-meta">
+      <span class="task-count">${item.tasks.length} tasks</span>
+      <button class="done-btn ${isDone ? 'marked' : ''}" data-day="${d}">${isDone ? '✓ Done' : 'Mark Done'}</button>
+      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+  `;
+
+  const body = document.createElement('div');
+  body.className = 'day-body';
+
+  item.tasks.forEach((task, i) => {
+    const typeClass = task.type === 'sql' ? 'sql' : task.type === 'concept' ? 'concept' : '';
+    const typeLabel = task.type === 'sql' ? '⬡ SQL WORKSHEET' : task.type === 'concept' ? '◈ CONCEPT PROMPT' : '◉ COCO CHAT PROMPT';
+
+    const block = document.createElement('div');
+    block.className = 'task-block';
+    block.innerHTML = `
+      <div class="task-label">Task ${i + 1}</div>
+      <div class="task-title">${task.title}</div>
+      <div class="prompt-box ${typeClass}">
+        <span class="prompt-tag">${typeLabel}</span>
+        <button class="copy-btn" data-prompt="${encodeURIComponent(task.prompt)}">Copy</button>
+        <pre class="prompt-text">${task.prompt}</pre>
+      </div>
+    `;
+    body.appendChild(block);
+  });
+
+  card.appendChild(header);
+  card.appendChild(body);
+  container.appendChild(card);
+
+  // Toggle open
+  header.addEventListener('click', (e) => {
+    if (e.target.closest('.done-btn') || e.target.closest('.copy-btn')) return;
+    card.classList.toggle('open');
+  });
+
+  // Mark done
+  header.querySelector('.done-btn').addEventListener('click', (e) => {
+    e.stopPropagation();
+    const btn = e.currentTarget;
+    if (completedDays.has(d)) {
+      completedDays.delete(d);
+      card.classList.remove('done');
+      btn.classList.remove('marked');
+      btn.textContent = 'Mark Done';
+    } else {
+      completedDays.add(d);
+      card.classList.add('done');
+      btn.classList.add('marked');
+      btn.textContent = '✓ Done';
+    }
+    saveProgress();
+    updateProgress();
+  });
+});
+
+// Copy buttons
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('.copy-btn');
+  if (!btn) return;
+  const text = decodeURIComponent(btn.dataset.prompt);
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copy';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+});
+
+updateProgress();
+</script>
+</body>
+</html>
